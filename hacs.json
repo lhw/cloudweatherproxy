@@ -1,8 +1,8 @@
 {
-    "name": "Integration blueprint",
-    "filename": "integration_blueprint.zip",
+    "name": "Cloud Weather Proxy",
+    "filename": "cloud_weather_proxy.zip",
     "hide_default_branch": true,
-    "homeassistant": "2023.8.0",
+    "homeassistant": "2024.6.0",
     "render_readme": true,
     "zip_release": true
 }
