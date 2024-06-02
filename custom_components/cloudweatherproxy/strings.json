@@ -1,0 +1,10 @@
+{
+  "config": {
+    "step": {
+      "user": {}
+    },
+    "abort": {
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
+    }
+  }
+}
