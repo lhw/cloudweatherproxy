@@ -1,5 +1,5 @@
 colorlog==6.7.0
 homeassistant==2024.5.5
 pip>=21.0,<23.2
-ruff==0.0.292
+ruff==0.4.7
 aiocloudweather==2024.6.4
