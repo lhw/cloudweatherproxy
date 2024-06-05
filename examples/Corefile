@@ -1,0 +1,8 @@
+. {
+  hosts {
+    10.0.0.2 rtupdate.wunderground.com api.weathercloud.net
+    fallthrough
+  }
+  forward . tls://9.9.9.9
+  log
+}

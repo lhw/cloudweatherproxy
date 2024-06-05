@@ -1,0 +1,27 @@
+{
+  http_port 8080
+  https_port 8443
+  auto_https off
+}
+
+http://rtupdate.wunderground.com {
+  @weatherstation {
+    path /weatherstation/updateweatherstation.php*
+  }
+  reverse_proxy @weatherstation {
+    rewrite * /wunderground{uri}
+    header_up "Authorization" "Basic {env.HA_ACCESS_TOKEN}"
+    to 10.0.0.2:8123
+  }
+}
+
+http://api.weathercloud.net {
+  @weatherstation {
+    path /v01/set/*
+  }
+  reverse_proxy @weatherstation {
+    rewrite * /weathercloud{uri}
+    header_up "Authorization" "Basic {env.HA_ACCESS_TOKEN}"
+    to 10.0.0.2:8123
+  }
+}
