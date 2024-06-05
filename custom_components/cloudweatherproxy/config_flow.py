@@ -23,8 +23,6 @@ class CloudWeatherProxyConfigFlow(ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     async def validate_input(hself, ass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
-        if not data[CONF_DNS_SERVERS].split(",") > 0:
-            raise InvalidInput()
         return {}
 
     async def async_step_user(

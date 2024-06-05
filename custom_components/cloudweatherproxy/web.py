@@ -19,7 +19,7 @@ class WundergroundReceiver(HomeAssistantView):
     """Wunderground receiver."""
 
     name = f"api:${DOMAIN}:wunderground"
-    url = "/weatherstation/updateweatherstation.php"
+    url = "/wunderground/weatherstation/updateweatherstation.php"
 
     def __init__(self, listener: CloudWeatherListener) -> None:
         """Initialize the Wunderground receiver."""
