@@ -1,10 +1,19 @@
 {
   "config": {
     "step": {
-      "user": {}
+      "user": {
+        "title": "Select desired proxy options",
+        "description": "Select the services to proxy and which DNS servers to query.",
+        "data": {
+          "weatherunderground_proxy": "Proxy Weather Underground",
+          "weathercloud_proxy": "Proxy Weathercloud",
+          "dns_servers": "DNS Servers"
+        }
+      }
     },
     "abort": {
-      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+      "invalid_input": "[%key:common::config_flow::abort::invalid_input%]"
     }
   }
 }

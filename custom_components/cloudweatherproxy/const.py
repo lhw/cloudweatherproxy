@@ -124,3 +124,7 @@ UNIT_DESCRIPTION_MAPPING: Final = {
         state_class=SensorStateClass.MEASUREMENT,
     ),
 }
+
+CONF_WUNDERGROUND_PROXY = "weatherunderground_proxy"
+CONF_WEATHERCLOUD_PROXY = "weathercloud_proxy"
+CONF_DNS_SERVERS = "dns_servers"
