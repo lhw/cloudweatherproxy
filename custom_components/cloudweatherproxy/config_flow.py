@@ -23,7 +23,7 @@ class CloudWeatherProxyConfigFlow(ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     async def validate_input(hself, ass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
-        """Validate input from user"""
+        """Validate input from user."""
         return {}
 
     async def async_step_user(
