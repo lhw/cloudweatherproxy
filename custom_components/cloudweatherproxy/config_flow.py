@@ -10,7 +10,7 @@ import voluptuous as vol
 from yarl import URL
 
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
-from homeassistant.exceptions import HomeAssistantError
+# from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.network import get_url
 
 from .const import CONF_WUNDERGROUND_PROXY, CONF_WEATHERCLOUD_PROXY, CONF_DNS_SERVERS, DOMAIN
