@@ -125,6 +125,6 @@ UNIT_DESCRIPTION_MAPPING: Final = {
     ),
 }
 
-CONF_WUNDERGROUND_PROXY = "weatherunderground_proxy"
-CONF_WEATHERCLOUD_PROXY = "weathercloud_proxy"
-CONF_DNS_SERVERS = "dns_servers"
+CONF_WUNDERGROUND_PROXY: Final = "weatherunderground_proxy"
+CONF_WEATHERCLOUD_PROXY: Final = "weathercloud_proxy"
+CONF_DNS_SERVERS: Final = "dns_servers"

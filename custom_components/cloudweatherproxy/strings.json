@@ -2,13 +2,22 @@
   "config": {
     "step": {
       "user": {
-        "title": "Select desired proxy options",
+        "description": "Select desired proxy options.",
         "data": {
           "weatherunderground_proxy": "Proxy Weather Underground",
           "weathercloud_proxy": "Proxy Weathercloud",
           "dns_servers": "DNS Servers"
+        },
+        "data_description": {
+          "dns_servers": "DNS Servers used for looking up the actual IPs of the domains. Can be a comma separated list of IPs."
         }
       }
+    },
+    "create_entry": {
+      "default": "To finish setting up the integration, please follow the guide from the README in regards on how to setup the DNS and HTTP server.\n\nThe destination address for HomeAssistant is `https://{address}:{port}`."
+    },
+    "abort": {
+      "single_instance": "Only a single instance can run at the same time as they occupy the same paths."
     }
   }
 }

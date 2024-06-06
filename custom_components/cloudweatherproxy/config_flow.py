@@ -11,7 +11,6 @@ from yarl import URL
 
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.exceptions import HomeAssistantError
-from homeassistant.core import HomeAssistant
 from homeassistant.helpers.network import get_url
 
 from .const import CONF_WUNDERGROUND_PROXY, CONF_WEATHERCLOUD_PROXY, CONF_DNS_SERVERS, DOMAIN
@@ -22,9 +21,8 @@ class CloudWeatherProxyConfigFlow(ConfigFlow, domain=DOMAIN):
 
     VERSION = 1
 
-    async def validate_input(hself, ass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
-        """Validate input from user."""
-        return {}
+    # async def validate_input(hself, ass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
+    #     return {}
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -32,22 +30,20 @@ class CloudWeatherProxyConfigFlow(ConfigFlow, domain=DOMAIN):
         """Handle the initial step."""
         errors: dict[str, str] = {}
         if user_input is not None:
-            try:
-                await self.validate_input(self.hass, user_input)
-            except InvalidInput:
-                errors["base"] = "invalid_input"
-            else:
-                base_url = URL(get_url(self.hass))
-                assert base_url.host
+            if self._async_current_entries():
+                return self.async_abort(reason="single_instance")
 
-                return self.async_create_entry(
-                    title="Cloud Weather Proxy",
-                    data=user_input,
-                    description_placeholders={
-                        "server": base_url.host,
-                        "port": str(base_url.port),
-                    },
-                )
+            # await self.validate_input(self.hass, user_input)
+            base_url = URL(get_url(self.hass))
+            assert base_url.host
+
+            return self.async_create_entry(
+                title="Cloud Weather Proxy",
+                data=user_input,
+                description_placeholders={
+                    "address": base_url.host, "port": str(base_url.port)
+                },
+            )
 
         return self.async_show_form(
             step_id="user",
@@ -60,7 +56,3 @@ class CloudWeatherProxyConfigFlow(ConfigFlow, domain=DOMAIN):
             ),
             errors=errors,
         )
-
-
-class InvalidInput(HomeAssistantError):
-    """Error to indicate there port is not usable."""
