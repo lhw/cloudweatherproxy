@@ -20,6 +20,8 @@ from homeassistant.const import (
     UnitOfVolumetricFlux,
 )
 
+from aiocloudweather.proxy import DataSink
+
 DOMAIN = "cloudweatherproxy"
 
 UNIT_DESCRIPTION_MAPPING: Final = {

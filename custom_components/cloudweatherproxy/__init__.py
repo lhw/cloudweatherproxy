@@ -1,6 +1,7 @@
 """The Wunderground Receiver integration."""
 
 from aiocloudweather import CloudWeatherListener
+from aiocloudweather.proxy import DataSink
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
@@ -15,10 +16,14 @@ PLATFORMS: list[Platform] = [Platform.SENSOR]
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Cloud Weather Proxy from a config entry."""
 
-    proxy_enabled = entry.data[CONF_WUNDERGROUND_PROXY] or entry.data[CONF_WEATHERCLOUD_PROXY]
+    proxies = [
+        DataSink.WUNDERGROUND] if entry.data[CONF_WUNDERGROUND_PROXY] else []
+    proxies += [DataSink.WEATHERCLOUD] if entry.data[CONF_WEATHERCLOUD_PROXY] else []
+
     dns_servers = entry.data[CONF_DNS_SERVERS]
     cloudweather = hass.data.setdefault(DOMAIN, {})[entry.entry_id] = (
-        CloudWeatherListener(proxy_enabled=proxy_enabled, dns_servers=dns_servers.split(","))
+        CloudWeatherListener(proxy_sinks=proxies,
+                             dns_servers=dns_servers.split(","))
     )
     hass.data[DOMAIN].setdefault("known_sensors", {})
 
