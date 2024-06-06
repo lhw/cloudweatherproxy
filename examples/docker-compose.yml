@@ -5,7 +5,7 @@ services:
     image: caddy:2
     restart: Unless-stopped
     ports:
-      - "10.0.0.2:80:8080"
+      - "<yourip>:80:8080"
     env:
       HA_ACCESS_TOKEN: abcdefghijklmnopqrstuvwxyz0123456789
     volumes:
@@ -14,7 +14,7 @@ services:
     image: coredns/coredns
     restart: Unless-stopped
     ports:
-      - "10.0.0.2:53:1053/udp"
+      - "<yourip>:53:1053/udp"
     volumes:
       - ./Corefile:/dns/Corefile
     command: -dns.port=1053 -conf /dns/Corefile

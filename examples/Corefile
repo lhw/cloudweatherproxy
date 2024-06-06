@@ -1,6 +1,6 @@
 . {
   hosts {
-    <homeassistant> rtupdate.wunderground.com api.weathercloud.net
+    <yourip> rtupdate.wunderground.com api.weathercloud.net
     fallthrough
   }
   forward . tls://9.9.9.9

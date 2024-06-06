@@ -53,7 +53,7 @@ An example setup is provided in the directory *examples*. It sets up a docker st
 * [Caddyfile](examples/Caddyfile)
   * Replace `<homeassistant>` with your HomeAssistant address and port
 * [Corefile](examples/Corefile)
-  * Replace `<homeassistant>` with your HomeAssistant address and port
+  * Replace `<yourip>` with your MITM IP address, i.e. the server running the Caddy and CoreDNS.
 ## Configuration is done in the UI
 
 <!---->
