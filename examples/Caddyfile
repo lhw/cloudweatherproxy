@@ -11,7 +11,7 @@ http://rtupdate.wunderground.com {
   reverse_proxy @weatherstation {
     rewrite * /wunderground{uri}
     header_up "Authorization" "Basic {env.HA_ACCESS_TOKEN}"
-    to 10.0.0.2:8123
+    to <homeassistant>
   }
 }
 
@@ -22,6 +22,6 @@ http://api.weathercloud.net {
   reverse_proxy @weatherstation {
     rewrite * /weathercloud{uri}
     header_up "Authorization" "Basic {env.HA_ACCESS_TOKEN}"
-    to 10.0.0.2:8123
+    to <homeassistant>
   }
 }
