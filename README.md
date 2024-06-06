@@ -3,13 +3,18 @@
 [![GitHub Release][releases-shield]][releases]
 [![GitHub Activity][commits-shield]][commits]
 [![License][license-shield]](LICENSE)
-![Project Maintenance][maintenance-shield]
+[![Project Maintenance][maintenance-shield]][maintainer]
+[![Mastodon][mastodon]][mastodon_profile]
 
 ## Description
 
 The Cloud Weather Proxy integration allows you to locally retrieve weather information from a weather station, that supports either Weather Underground or Weathercloud, and display it in Home Assistant.
 
 To use the integration an additional local setup including DNS and a forwarding HTTP server is required, as the destination URLs for the weather station need to be spoofed.
+
+This whole setup really only works with weather stations that use HTTP, i.e. unencrypted traffic. Any weather station that uses HTTPS will require a lot of more effort, unless they do not check the certificates.
+
+Generally though these weather stations use such simple TCP/HTTP libraries that they go for HTTP.  Give it a try!
 
 Optionally the weather data can be passed to its indended destination.
 
@@ -68,5 +73,8 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 [commits]: https://github.com/lhw/cloudweatherproxy/commits/main
 [license-shield]: https://img.shields.io/github/license/lhw/cloudweatherproxy.svg
 [maintenance-shield]: https://img.shields.io/badge/maintainer-Lennart%20Weller%20%40lhw-blue.svg
+[maintainer]: https://github.com/lhw
 [releases-shield]: https://img.shields.io/github/release/lhw/cloudweatherproxy.svg
 [releases]: https://github.com/lhw/cloudweatherproxy/releases
+[mastodon]: https://img.shields.io/mastodon/follow/000048422?domain=https%3A%2F%2Fchaos.social
+[mastodon_profile]: https://chaos.social/@lhw
