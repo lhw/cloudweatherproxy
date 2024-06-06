@@ -23,6 +23,7 @@ class CloudWeatherProxyConfigFlow(ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     async def validate_input(hself, ass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
+        """Validate input from user"""
         return {}
 
     async def async_step_user(
@@ -32,7 +33,7 @@ class CloudWeatherProxyConfigFlow(ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
         if user_input is not None:
             try:
-                info = await self.validate_input(self.hass, user_input)
+                await self.validate_input(self.hass, user_input)
             except InvalidInput:
                 errors["base"] = "invalid_input"
             else:
