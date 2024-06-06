@@ -9,8 +9,8 @@ http://rtupdate.wunderground.com {
     path /weatherstation/updateweatherstation.php*
   }
   reverse_proxy @weatherstation {
-    rewrite * /wunderground{uri}
-    header_up "Authorization" "Basic {env.HA_ACCESS_TOKEN}"
+    rewrite /wunderground{uri}
+    header_up "Authorization" "Bearer {env.HA_ACCESS_TOKEN}"
     to <homeassistant>
   }
 }
@@ -20,8 +20,8 @@ http://api.weathercloud.net {
     path /v01/set/*
   }
   reverse_proxy @weatherstation {
-    rewrite * /weathercloud{uri}
-    header_up "Authorization" "Basic {env.HA_ACCESS_TOKEN}"
+    rewrite /weathercloud{uri}
+    header_up "Authorization" "Bearer {env.HA_ACCESS_TOKEN}"
     to <homeassistant>
   }
 }
