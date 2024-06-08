@@ -1,6 +1,6 @@
-<img align="left" width="100" height="100" src="https://raw.githubusercontent.com/lhw/cloudweatherproxy/main/media/transparent.png" alt="Cloud Weather Proxy logo">
 
-# Cloud Weather Proxy
+<h1><img style="float:left;" width="128" height="128" src="https://raw.githubusercontent.com/lhw/cloudweatherproxy/main/media/transparent.png" alt="Cloud Weather Proxy logo">Cloud Weather Proxy
+</h1>
 
 [![GitHub Release][releases-shield]][releases]
 [![GitHub Activity][commits-shield]][commits]
