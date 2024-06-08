@@ -43,7 +43,21 @@ Optionally the weather data can be passed to its indended destination.
 1. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Cloud Weather Proxy"
 
 ### HACS
+
+#### Automatic installation
+
 *Coming soon*
+
+#### Manual installation
+1. Open the Home Assistant UI and navigate to the HACS section.
+2. Click on "Integrations" in the HACS menu.
+3. Click on the three dots in the top right corner and select "Custom repositories".
+4. In the "Add custom repository" dialog, enter the URL of the custom component repository: `https://github.com/lhw/cloudweatherproxy`.
+5. Select the category "Integration" and click "Add".
+6. Once the repository is added, go back to the HACS menu and click on "Integrations" again.
+7. Search for "Cloud Weather Proxy" and click on it.
+8. Click on "Install" to install the custom component.
+9. Restart Home Assistant to apply the changes.
 
 
 ### MITM/Spoofing Setup
