@@ -1,3 +1,5 @@
+<img align="left" width="80" height="80" src="https://raw.githubusercontent.com/lhw/cloudweatherproxy/main/media/transparent.png" alt="Cloud Weather Proxy logo">
+
 # Cloud Weather Proxy
 
 [![GitHub Release][releases-shield]][releases]
