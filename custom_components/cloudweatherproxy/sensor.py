@@ -41,7 +41,7 @@ async def async_setup_entry(
             unique_id = f"{station.station_id}-{sensor.name}"
 
             if unique_id in known_sensors:
-                known_sensors[unique_id].update_sensor(sensor)
+                await known_sensors[unique_id].update_sensor(station)
                 continue
 
             new_sensor = CloudWeatherEntity(
@@ -55,7 +55,7 @@ async def async_setup_entry(
             _LOGGER.debug("Adding %d sensors", len(new_sensors))
             async_add_entities(new_sensors)
         for nsensor in new_sensors:
-            _LOGGER.debug("Adding new sensors [%s]: %s", unique_id, sensor)
+            _LOGGER.debug("Adding new sensors [%s]: %s", unique_id, nsensor)
             nsensor.async_write_ha_state()
 
     cloudweather.new_dataset_cb.append(_new_dataset)
@@ -119,8 +119,10 @@ class CloudWeatherEntity(CloudWeatherBaseEntity, SensorEntity):
         """Return the name of the entity."""
         return self._name
 
-    def update_sensor(self, sensor: Sensor) -> None:
+    async def update_sensor(self, station: WeatherStation) -> None:
         """Update the entity."""
-        _LOGGER.debug("Updating %s [%s]", self.unique_id, sensor)
-        self.sensor = sensor
+        self.station = station
+        self.sensor = getattr(station, self.sensor.name)
+        _LOGGER.debug("Updating %s [%s] with update time %s",
+                      self.unique_id, self.sensor, self.station.update_time)
         self.async_write_ha_state()
