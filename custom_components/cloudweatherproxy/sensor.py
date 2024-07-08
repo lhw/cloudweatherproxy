@@ -79,6 +79,7 @@ class CloudWeatherBaseEntity(Entity):
             name=f"Weatherstation {station.station_id}",
             identifiers={(DOMAIN, station.station_id)},
             sw_version=station.station_sw_version,
+            manufacturer=station.vendor,
         )
 
     @property
