@@ -14,5 +14,5 @@
   "requirements": [
     "aiocloudweather==2024.7.1"
   ],
-  "version": "2024.7.3"
+  "version": "2024.7.2"
 }
