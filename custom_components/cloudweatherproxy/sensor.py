@@ -55,8 +55,9 @@ async def async_setup_entry(
             _LOGGER.debug("Adding %d sensors", len(new_sensors))
             async_add_entities(new_sensors)
         for nsensor in new_sensors:
-            _LOGGER.debug("Adding new sensors [%s]: %s", unique_id, nsensor)
             nsensor.async_write_ha_state()
+
+        hass.data[DOMAIN]["known_sensors"] = known_sensors
 
     cloudweather.new_dataset_cb.append(_new_dataset)
     entry.async_on_unload(
