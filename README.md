@@ -5,7 +5,7 @@
 
 [![GitHub Release][releases-shield]][releases]
 [![GitHub Activity][commits-shield]][commits]
-[![License][license-shield]](LICENSE)
+![Installs][installs]
 [![Project Maintenance][maintenance-shield]][maintainer]
 [![Mastodon][mastodon]][mastodon_profile]
 
@@ -46,7 +46,8 @@ Optionally the weather data can be passed to its indended destination.
 
 #### Automatic installation
 
-*Coming soon*
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.][hacs-repo-badge]][hacs-install]
+
 
 #### Manual installation
 1. Open the Home Assistant UI and navigate to the HACS section.
@@ -88,10 +89,12 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 
 [commits-shield]: https://img.shields.io/github/commit-activity/y/lhw/cloudweatherproxy.svg
 [commits]: https://github.com/lhw/cloudweatherproxy/commits/main
-[license-shield]: https://img.shields.io/github/license/lhw/cloudweatherproxy.svg
 [maintenance-shield]: https://img.shields.io/badge/maintainer-Lennart%20Weller%20%40lhw-blue.svg
 [maintainer]: https://github.com/lhw
 [releases-shield]: https://img.shields.io/github/release/lhw/cloudweatherproxy.svg
 [releases]: https://github.com/lhw/cloudweatherproxy/releases
 [mastodon]: https://img.shields.io/mastodon/follow/000048422?domain=https%3A%2F%2Fchaos.social
 [mastodon_profile]: https://chaos.social/@lhw
+[installs]: https://img.shields.io/badge/dynamic/json?logo=home-assistant&logoColor=ccc&label=usage&suffix=%20installs&cacheSeconds=15600&url=https://analytics.home-assistant.io/custom_integrations.json&query=$.cloudweatherproxy.total
+[hacs-repo-badge]: https://my.home-assistant.io/badges/hacs_repository.svg
+[hacs-install]: https://my.home-assistant.io/redirect/hacs_repository/?owner=lhw&repository=https%3A%2F%2Fgithub.com%2Flhw%2Fcloudweatherproxy&category=Integration
