@@ -75,7 +75,7 @@ class CloudWeatherProxyConfigFlow(ConfigFlow, domain=DOMAIN):
             _LOGGER.debug(
                 "Reconfiguring Cloud Weather Proxy with %s", user_input)
             listener: CloudWeatherListener = self.hass.data[DOMAIN][config_entry.entry_id]
-            listener.update_config(
+            await listener.update_config(
                 proxy_sinks=[
                     DataSink.WUNDERGROUND if user_input[CONF_WUNDERGROUND_PROXY] else None,
                     DataSink.WEATHERCLOUD if user_input[CONF_WEATHERCLOUD_PROXY] else None,
