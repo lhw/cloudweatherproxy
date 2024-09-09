@@ -2,9 +2,13 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 import voluptuous as vol
+
+from aiocloudweather import CloudWeatherListener
+from aiocloudweather.proxy import DataSink
 
 
 from yarl import URL
@@ -14,6 +18,8 @@ from homeassistant.config_entries import ConfigFlow, ConfigFlowResult, ConfigEnt
 from homeassistant.helpers.network import get_url
 
 from .const import CONF_WUNDERGROUND_PROXY, CONF_WEATHERCLOUD_PROXY, CONF_DNS_SERVERS, DOMAIN
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class CloudWeatherProxyConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -57,32 +63,34 @@ class CloudWeatherProxyConfigFlow(ConfigFlow, domain=DOMAIN):
             errors=errors,
         )
 
-    def async_get_options_flow(
-        config_entry: ConfigEntry,
-    ) -> OptionsFlow:
-        """Create the options flow."""
-        return OptionsFlowHandler(config_entry)
+    async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None):
+        """Add reconfigure step to allow to reconfigure a config entry."""
 
+        config_entry: ConfigEntry = (
+            self.hass.config_entries.async_get_entry(
+                self.context.get("entry_id"))
+        )
 
-class OptionsFlowHandler(OptionsFlow):
-    def __init__(self, config_entry: ConfigEntry) -> None:
-        """Initialize options flow."""
-        self.config_entry = config_entry
-
-    async def async_step_init(
-        self, user_input: dict[str, Any] | None = None
-    ) -> ConfigFlowResult:
-        """Manage the options."""
         if user_input is not None:
-            return self.async_create_entry(title="Cloud Weather Proxy", data=user_input)
+            _LOGGER.debug(
+                "Reconfiguring Cloud Weather Proxy with %s", user_input)
+            listener: CloudWeatherListener = self.hass.data[DOMAIN][config_entry.entry_id]
+            listener.update_config(
+                proxy_sinks=[
+                    DataSink.WUNDERGROUND if user_input[CONF_WUNDERGROUND_PROXY] else None,
+                    DataSink.WEATHERCLOUD if user_input[CONF_WEATHERCLOUD_PROXY] else None,
+                ],
+                dns_servers=user_input[CONF_DNS_SERVERS].split(","),
+            )
 
+        data = config_entry.data
         return self.async_show_form(
-            step_id="init",
+            step_id="reconfigure",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_WUNDERGROUND_PROXY): bool,
-                    vol.Required(CONF_WEATHERCLOUD_PROXY): bool,
-                    vol.Optional(CONF_DNS_SERVERS, default="9.9.9.9"): str,
+                    vol.Required(CONF_WUNDERGROUND_PROXY, default=data[CONF_WUNDERGROUND_PROXY]): bool,
+                    vol.Required(CONF_WEATHERCLOUD_PROXY, default=data[CONF_WEATHERCLOUD_PROXY]): bool,
+                    vol.Optional(CONF_DNS_SERVERS, default=data[CONF_DNS_SERVERS]): str,
                 }
             ),
         )
