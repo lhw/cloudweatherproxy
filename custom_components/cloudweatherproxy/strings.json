@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "description": "Select desired proxy options.",
+        "description": "All data forwarded to Home Assistant is processed. Optionally you can forward the data to their intended data sink. Please select for which services you want to enable this feature",
         "data": {
           "weatherunderground_proxy": "Proxy Weather Underground",
           "weathercloud_proxy": "Proxy Weathercloud",
@@ -18,6 +18,21 @@
     },
     "abort": {
       "single_instance": "Only a single instance can run at the same time as they occupy the same paths."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "description": "All data forwarded to Home Assistant is processed. Optionally you can forward the data to their intended data sink. Please select for which services you want to enable this feature",
+        "data": {
+          "weatherunderground_proxy": "Proxy Weather Underground",
+          "weathercloud_proxy": "Proxy Weathercloud",
+          "dns_servers": "DNS Servers"
+        },
+        "data_description": {
+          "dns_servers": "DNS Servers used for looking up the actual IPs of the domains. Can be a comma separated list of IPs."
+        }
+      }
     }
   }
 }

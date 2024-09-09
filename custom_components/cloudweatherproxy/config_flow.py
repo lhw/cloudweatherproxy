@@ -9,7 +9,7 @@ import voluptuous as vol
 
 from yarl import URL
 
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
+from homeassistant.config_entries import ConfigFlow, ConfigFlowResult, ConfigEntry, OptionsFlow
 # from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.network import get_url
 
@@ -55,4 +55,34 @@ class CloudWeatherProxyConfigFlow(ConfigFlow, domain=DOMAIN):
                 }
             ),
             errors=errors,
+        )
+
+    def async_get_options_flow(
+        config_entry: ConfigEntry,
+    ) -> OptionsFlow:
+        """Create the options flow."""
+        return OptionsFlowHandler(config_entry)
+
+
+class OptionsFlowHandler(OptionsFlow):
+    def __init__(self, config_entry: ConfigEntry) -> None:
+        """Initialize options flow."""
+        self.config_entry = config_entry
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Manage the options."""
+        if user_input is not None:
+            return self.async_create_entry(title="Cloud Weather Proxy", data=user_input)
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_WUNDERGROUND_PROXY): bool,
+                    vol.Required(CONF_WEATHERCLOUD_PROXY): bool,
+                    vol.Optional(CONF_DNS_SERVERS, default="9.9.9.9"): str,
+                }
+            ),
         )
