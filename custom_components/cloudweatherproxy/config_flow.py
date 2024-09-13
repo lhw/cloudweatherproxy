@@ -70,11 +70,15 @@ class CloudWeatherProxyConfigFlow(ConfigFlow, domain=DOMAIN):
             self.hass.config_entries.async_get_entry(
                 self.context.get("entry_id"))
         )
+        listener: CloudWeatherListener = self.hass.data[DOMAIN][config_entry.entry_id]
+        current_proxy_settings = listener.get_active_proxies()
+        current_dns_servers = listener.get_dns_servers()
+        _LOGGER.debug("Current configuration: %s and proxies %s",
+                      current_proxy_settings, current_dns_servers)
 
         if user_input is not None:
             _LOGGER.debug(
                 "Reconfiguring Cloud Weather Proxy with %s", user_input)
-            listener: CloudWeatherListener = self.hass.data[DOMAIN][config_entry.entry_id]
             await listener.update_config(
                 proxy_sinks=[
                     DataSink.WUNDERGROUND if user_input[CONF_WUNDERGROUND_PROXY] else None,
@@ -83,14 +87,13 @@ class CloudWeatherProxyConfigFlow(ConfigFlow, domain=DOMAIN):
                 dns_servers=user_input[CONF_DNS_SERVERS].split(","),
             )
 
-        data = config_entry.data
         return self.async_show_form(
             step_id="reconfigure",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_WUNDERGROUND_PROXY, default=data[CONF_WUNDERGROUND_PROXY]): bool,
-                    vol.Required(CONF_WEATHERCLOUD_PROXY, default=data[CONF_WEATHERCLOUD_PROXY]): bool,
-                    vol.Optional(CONF_DNS_SERVERS, default=data[CONF_DNS_SERVERS]): str,
+                    vol.Required(CONF_WUNDERGROUND_PROXY, default=(DataSink.WUNDERGROUND in current_proxy_settings)): bool,
+                    vol.Required(CONF_WEATHERCLOUD_PROXY, default=(DataSink.WEATHERCLOUD in current_proxy_settings)): bool,
+                    vol.Optional(CONF_DNS_SERVERS, default=current_dns_servers): str,
                 }
             ),
         )
