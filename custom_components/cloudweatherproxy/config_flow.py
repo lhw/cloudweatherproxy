@@ -13,7 +13,7 @@ from aiocloudweather.proxy import DataSink
 
 from yarl import URL
 
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult, ConfigEntry, OptionsFlow
+from homeassistant.config_entries import ConfigFlow, ConfigFlowResult, ConfigEntry
 # from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.network import get_url
 
