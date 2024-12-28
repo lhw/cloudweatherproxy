@@ -28,7 +28,8 @@
       "default": "To finish setting up the integration, please follow the guide from the README in regards on how to setup the DNS and HTTP server.\n\nThe destination address for HomeAssistant is `https://{address}:{port}`."
     },
     "abort": {
-      "single_instance": "Only a single instance can run at the same time as they occupy the same paths."
+      "single_instance": "Only a single instance can run at the same time as they occupy the same paths.",
+      "reconfigure_successful": "The configuration has been updated. The changes are live immediately."
     }
   }
 }

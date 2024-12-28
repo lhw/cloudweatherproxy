@@ -66,11 +66,9 @@ class CloudWeatherProxyConfigFlow(ConfigFlow, domain=DOMAIN):
     async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None):
         """Add reconfigure step to allow to reconfigure a config entry."""
 
-        config_entry: ConfigEntry = (
-            self.hass.config_entries.async_get_entry(
-                self.context.get("entry_id"))
-        )
+        config_entry: ConfigEntry = self._get_reconfigure_entry()
         listener: CloudWeatherListener = self.hass.data[DOMAIN][config_entry.entry_id]
+        _LOGGER.debug("Reconfiguring Cloud Weather Proxy: %s", listener)
         current_proxy_settings = listener.get_active_proxies()
         current_dns_servers = listener.get_dns_servers()
         _LOGGER.debug("Current configuration: %s and proxies %s",
@@ -84,7 +82,16 @@ class CloudWeatherProxyConfigFlow(ConfigFlow, domain=DOMAIN):
                     DataSink.WUNDERGROUND if user_input[CONF_WUNDERGROUND_PROXY] else None,
                     DataSink.WEATHERCLOUD if user_input[CONF_WEATHERCLOUD_PROXY] else None,
                 ],
-                dns_servers=user_input[CONF_DNS_SERVERS].split(","),
+                dns_servers=user_input[CONF_DNS_SERVERS].split(",")
+            )
+            self._abort_if_unique_id_mismatch()
+            return self.async_update_reload_and_abort(
+                config_entry,
+                data_updates={
+                    CONF_WUNDERGROUND_PROXY: user_input[CONF_WUNDERGROUND_PROXY],
+                    CONF_WEATHERCLOUD_PROXY: user_input[CONF_WEATHERCLOUD_PROXY],
+                    CONF_DNS_SERVERS: user_input[CONF_DNS_SERVERS],
+                },
             )
 
         return self.async_show_form(
@@ -93,7 +100,7 @@ class CloudWeatherProxyConfigFlow(ConfigFlow, domain=DOMAIN):
                 {
                     vol.Required(CONF_WUNDERGROUND_PROXY, default=(DataSink.WUNDERGROUND in current_proxy_settings)): bool,
                     vol.Required(CONF_WEATHERCLOUD_PROXY, default=(DataSink.WEATHERCLOUD in current_proxy_settings)): bool,
-                    vol.Optional(CONF_DNS_SERVERS, default=current_dns_servers): str,
+                    vol.Optional(CONF_DNS_SERVERS, default=",".join(current_dns_servers)): str,
                 }
             ),
         )
