@@ -12,7 +12,7 @@
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/lhw/cloudweatherproxy/issues",
   "requirements": [
-    "aiocloudweather==2024.7.1"
+    "aiocloudweather==2024.12.1"
   ],
-  "version": "2024.7.2"
+  "version": "2024.12.0"
 }
