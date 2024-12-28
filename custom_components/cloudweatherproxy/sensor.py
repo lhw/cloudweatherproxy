@@ -13,7 +13,6 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
-from homeassistant.util.unit_system import US_CUSTOMARY_SYSTEM, UnitSystem
 
 from .const import DOMAIN, UNIT_DESCRIPTION_MAPPING
 
@@ -96,25 +95,18 @@ class CloudWeatherEntity(CloudWeatherBaseEntity, SensorEntity):
         self,
         sensor: Sensor,
         station: WeatherStation,
-        unit_system: UnitSystem,
         name: str,
     ) -> None:
         """Initialize the sensor entity."""
         super().__init__(sensor, station)
-        self.unit_system = unit_system
         self._name = name
-        if unit_system is US_CUSTOMARY_SYSTEM:
-            description = UNIT_DESCRIPTION_MAPPING[sensor.imperial_unit]
-        else:
-            description = UNIT_DESCRIPTION_MAPPING[sensor.metric_unit]
+        description = UNIT_DESCRIPTION_MAPPING[sensor.unit]
         self.entity_description = description
 
     @property
     def native_value(self) -> StateType | None:
         """Return the state of the entity."""
-        if self.unit_system is US_CUSTOMARY_SYSTEM:
-            return self.sensor.imperial
-        return self.sensor.metric
+        return self.sensor.value
 
     @property
     def name(self) -> str:

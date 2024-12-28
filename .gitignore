@@ -18,3 +18,4 @@ config/*
 
 # Integration specific files
 .access-token
+tests
