@@ -44,7 +44,7 @@ async def async_setup_entry(
                 continue
 
             new_sensor = CloudWeatherEntity(
-                sensor, station, hass.config.units, str(
+                sensor, station, str(
                     field.metadata.get("name"))
             )
             known_sensors[unique_id] = new_sensor

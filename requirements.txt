@@ -2,4 +2,4 @@ pip>=24.1,<25.0
 ruff==0.8.*
 colorlog==6.9.*
 homeassistant==2024.12.5
-aiocloudweather==2024.12.1
+aiocloudweather==2024.12.2
