@@ -97,4 +97,4 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 [mastodon_profile]: https://chaos.social/@lhw
 [installs]: https://img.shields.io/badge/dynamic/json?logo=home-assistant&logoColor=ccc&label=usage&suffix=%20installs&cacheSeconds=15600&url=https://analytics.home-assistant.io/custom_integrations.json&query=$.cloudweatherproxy.total
 [hacs-repo-badge]: https://my.home-assistant.io/badges/hacs_repository.svg
-[hacs-install]: https://my.home-assistant.io/redirect/hacs_repository/?owner=lhw&repository=https%3A%2F%2Fgithub.com%2Flhw%2Fcloudweatherproxy&category=Integration
+[hacs-install]: https://my.home-assistant.io/redirect/hacs_repository/?owner=lhw&repository=cloudweatherproxy&category=Integration
