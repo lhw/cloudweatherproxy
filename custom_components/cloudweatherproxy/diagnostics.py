@@ -1,4 +1,4 @@
-"""Simple diagnostics option. To be expanded"""
+"""Simple diagnostics option. To be expanded later."""
 
 from typing import Any
 from homeassistant.core import HomeAssistant
