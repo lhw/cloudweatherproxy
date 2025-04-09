@@ -1,3 +1,5 @@
+"""Simple diagnostics option. To be expanded"""
+
 from typing import Any
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
