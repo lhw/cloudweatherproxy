@@ -4,7 +4,7 @@ from dataclasses import fields
 import logging
 import time
 
-from aiocloudweather import CloudWeatherListener, Sensor, WeatherStation
+from .aiocloudweather import CloudWeatherListener, Sensor, WeatherStation
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry

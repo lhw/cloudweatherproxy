@@ -7,9 +7,8 @@ from typing import Any
 
 import voluptuous as vol
 
-from aiocloudweather import CloudWeatherListener
-from aiocloudweather.proxy import DataSink
-
+from .aiocloudweather import CloudWeatherListener
+from .aiocloudweather.proxy import DataSink
 
 from yarl import URL
 
@@ -69,7 +68,7 @@ class CloudWeatherProxyConfigFlow(ConfigFlow, domain=DOMAIN):
         config_entry: ConfigEntry = self._get_reconfigure_entry()
         listener: CloudWeatherListener = self.hass.data[DOMAIN][config_entry.entry_id]
         _LOGGER.debug("Reconfiguring Cloud Weather Proxy: %s", listener)
-        current_proxy_settings = listener.get_active_proxies()
+        current_proxy_settings = listener.get_active_proxies() or []
         current_dns_servers = listener.get_dns_servers()
         _LOGGER.debug("Current configuration: %s and proxies %s",
                       current_proxy_settings, current_dns_servers)
@@ -77,13 +76,25 @@ class CloudWeatherProxyConfigFlow(ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             _LOGGER.debug(
                 "Reconfiguring Cloud Weather Proxy with %s", user_input)
+            proxy_sinks: list[DataSink] = []
+            if user_input[CONF_WUNDERGROUND_PROXY]:
+                proxy_sinks.append(DataSink.WUNDERGROUND)
+            if user_input[CONF_WEATHERCLOUD_PROXY]:
+                proxy_sinks.append(DataSink.WEATHERCLOUD)
             await listener.update_config(
-                proxy_sinks=[
-                    DataSink.WUNDERGROUND if user_input[CONF_WUNDERGROUND_PROXY] else None,
-                    DataSink.WEATHERCLOUD if user_input[CONF_WEATHERCLOUD_PROXY] else None,
-                ],
+                proxy_sinks=proxy_sinks or None,
                 dns_servers=user_input[CONF_DNS_SERVERS].split(",")
             )
+
+            # Ensure the listener's internal state is consistent (aiocloudweather may not
+            # update all internal fields on reconfiguration).
+            listener.proxy_sinks = proxy_sinks or []
+            listener.dns_servers = user_input[CONF_DNS_SERVERS].split(",")
+            listener.proxy_enabled = bool(proxy_sinks and len(proxy_sinks) > 0)
+            if not proxy_sinks and listener.proxy:
+                await listener.proxy.close()
+                listener.proxy = None
+
             self._abort_if_unique_id_mismatch()
             return self.async_update_reload_and_abort(
                 config_entry,
