@@ -43,81 +43,82 @@ class WundergroundRawSensor:
     station_id: str = field(metadata={"arg": "ID"})
     station_key: str = field(metadata={"arg": "PASSWORD"})
 
-    date_utc: str = field(
+    date_utc: str | None = field(
         default=None,
         metadata={"arg": "dateutc",
                   "format_string": "%Y-%m-%d+%H%%3A%M%%3A%S"},
     )
 
-    barometer: float = field(
+    barometer: float | None = field(
         default=None, metadata={"unit": UnitOfPressure.INHG, "arg": "baromin"}
     )
-    temperature: float = field(
+    temperature: float | None = field(
         default=None, metadata={"unit": UnitOfTemperature.FAHRENHEIT, "arg": "tempf"}
     )
-    humidity: float = field(
+    humidity: float | None = field(
         default=None, metadata={"unit": PERCENTAGE, "arg": "humidity"}
     )
-    indoortemperature: float = field(
+    indoortemperature: float | None = field(
         default=None,
         metadata={"unit": UnitOfTemperature.FAHRENHEIT, "arg": "indoortempf"},
     )
-    indoorhumidity: float = field(
+    indoorhumidity: float | None = field(
         default=None, metadata={"unit": PERCENTAGE, "arg": "indoorhumidity"}
     )
 
-    dewpoint: float = field(
+    dewpoint: float | None = field(
         default=None, metadata={"unit": UnitOfTemperature.FAHRENHEIT, "arg": "dewptf"}
     )
-    rain: float = field(
+    rain: float | None = field(
         default=None,
         metadata={"unit": UnitOfPrecipitationDepth.INCHES, "arg": "rainin"},
     )
-    dailyrain: float = field(
+    dailyrain: float | None = field(
         default=None,
         metadata={"unit": UnitOfPrecipitationDepth.INCHES,
                   "arg": "dailyrainin"},
     )
-    winddirection: float = field(
+    winddirection: float | None = field(
         default=None, metadata={"unit": DEGREE, "arg": "winddir"}
     )
-    windspeed: float = field(
+    windspeed: float | None = field(
         default=None,
         metadata={"unit": UnitOfSpeed.MILES_PER_HOUR, "arg": "windspeedmph"},
     )
-    windgustspeed: float = field(
+    windgustspeed: float | None = field(
         default=None,
         metadata={"unit": UnitOfSpeed.MILES_PER_HOUR, "arg": "windgustmph"},
     )
-    windgustdirection: float = field(
+    windgustdirection: float | None = field(
         default=None, metadata={"unit": DEGREE, "arg": "windgustdir"}
     )
-    windspeedavg: float = field(
+    windspeedavg: float | None = field(
         default=None, metadata={"unit": UnitOfSpeed.MILES_PER_HOUR, "arg": "windspdmph_avg2m"}
     )
-    winddirectionavg: float = field(
+    winddirectionavg: float | None = field(
         default=None, metadata={"unit": DEGREE, "arg": "winddir_avg2m"}
     )
-    windgustspeed10m: float = field(
+    windgustspeed10m: float | None = field(
         default=None, metadata={"unit": UnitOfSpeed.MILES_PER_HOUR, "arg": "windgustmph_10m"}
     )
-    windgustdirection10m: float = field(
+    windgustdirection10m: float | None = field(
         default=None, metadata={"unit": DEGREE, "arg": "windgustdir_10m"}
     )
-    windchill: float = field(
+    windchill: float | None = field(
         default=None, metadata={"unit": UnitOfTemperature.FAHRENHEIT, "arg": "windchillf"}
     )
-    absbarometer: float = field(
+    absbarometer: float | None = field(
         default=None, metadata={"unit": UnitOfPressure.INHG, "arg": "absbaromin"}
     )
-    weeklyrain: float = field(
+    weeklyrain: float | None = field(
         default=None, metadata={"unit": UnitOfPrecipitationDepth.INCHES, "arg": "weeklyrainin"}
     )
-    monthlyrain: float = field(
+    monthlyrain: float | None = field(
         default=None, metadata={"unit": UnitOfPrecipitationDepth.INCHES, "arg": "monthlyrainin"}
     )
-    uv: int = field(default=None, metadata={"unit": UV_INDEX, "arg": "UV"})
-    solarradiation: float = field(
+    uv: int | None = field(default=None, metadata={
+                           "unit": UV_INDEX, "arg": "UV"})
+    solarradiation: float | None = field(
         default=None,
         metadata={
             "unit": LIGHT_LUX,
@@ -125,7 +126,7 @@ class WundergroundRawSensor:
             "arg": "solarRadiation",
         },
     )
-    solarradiation_new: float = field(
+    solarradiation_new: float | None = field(
         default=None,
         metadata={
             "unit": UnitOfIrradiance.WATTS_PER_SQUARE_METER,
@@ -144,84 +145,76 @@ class WeathercloudRawSensor:
     station_id: str = field(metadata={"arg": "wid"})
     station_key: str = field(metadata={"arg": "key"})
 
-    barometer: int = field(
+    barometer: int | None = field(
         default=None, metadata={"unit": UnitOfPressure.HPA, "arg": "bar"}
     )
-    temperature: int = field(
+    temperature: int | None = field(
         default=None, metadata={"unit": UnitOfTemperature.CELSIUS, "arg": "temp"}
     )
-    temperature2: int = field(
+    temperature2: int | None = field(
         default=None, metadata={"unit": UnitOfTemperature.CELSIUS, "arg": "temp02"}
     )
-    temperatureindoor: int = field(
+    humidity: int | None = field(default=None, metadata={
+        "unit": PERCENTAGE, "arg": "hum"})
+    humidity2: int | None = field(default=None, metadata={
+        "unit": PERCENTAGE, "arg": "hum02"})
+    indoortemperature: int | None = field(
         default=None, metadata={"unit": UnitOfTemperature.CELSIUS, "arg": "tempin"}
     )
-    humidity: int = field(default=None, metadata={
-                          "unit": PERCENTAGE, "arg": "hum"})
-    humidity2: int = field(default=None, metadata={
-                           "unit": PERCENTAGE, "arg": "hum02"})
-    humidityindoor: int = field(
+    indoorhumidity: int | None = field(
         default=None, metadata={"unit": PERCENTAGE, "arg": "humin"}
     )
-    indoortemperature: int = field(
-        default=None, metadata={"unit": UnitOfTemperature.CELSIUS, "arg": "tempin"}
-    )
-    indoorhumidity: int = field(
-        default=None, metadata={"unit": PERCENTAGE, "arg": "humin"}
-    )
-    dewpoint: int = field(
+    dewpoint: int | None = field(
         default=None, metadata={"unit": UnitOfTemperature.CELSIUS, "arg": "dew"}
     )
-    dewpointindoor: int = field(
+    dewpointindoor: int | None = field(
         default=None, metadata={"unit": UnitOfTemperature.CELSIUS, "arg": "dewin"}
     )
-    heatindex: int = field(
-        default=None, metadata={"unit": UnitOfTemperature.CELSIUS, "arg": "heat"}
-    )
-    dailyrain: int = field(
+    dailyrain: int | None = field(
         default=None,
         metadata={"unit": UnitOfPrecipitationDepth.MILLIMETERS, "arg": "rain"},
     )
-    rain: int = field(
+    rain: int | None = field(
         default=None,
         metadata={
             "unit": UnitOfVolumetricFlux.MILLIMETERS_PER_HOUR,
             "arg": "rainrate",
         },
     )
-    heatindex: int = field(
+    heatindex: int | None = field(
         default=None, metadata={"unit": UnitOfTemperature.CELSIUS, "arg": "heat"}
     )
-    heatindexindoor: int = field(
+    heatindexindoor: int | None = field(
         default=None, metadata={"unit": UnitOfTemperature.CELSIUS, "arg": "heatin"}
     )
-    temphumiditywind: int = field(
+    temphumiditywind: int | None = field(
         default=None, metadata={"unit": UnitOfTemperature.CELSIUS, "arg": "thw"}
     )
-    winddirection: int = field(default=None, metadata={
-                               "unit": DEGREE, "arg": "wdir"})
-    windspeed: int = field(
+    winddirection: int | None = field(default=None, metadata={
+        "unit": DEGREE, "arg": "wdir"})
+    windspeed: int | None = field(
         default=None, metadata={"unit": UnitOfSpeed.METERS_PER_SECOND, "arg": "wspd"}
     )
-    windgustspeed: int = field(
+    windgustspeed: int | None = field(
         default=None, metadata={"unit": UnitOfSpeed.METERS_PER_SECOND, "arg": "wspdhi"}
     )
-    windchill: int = field(
+    windchill: int | None = field(
         default=None, metadata={"unit": UnitOfTemperature.CELSIUS, "arg": "chill"}
     )
-    windspeedavg: int = field(
+    windspeedavg: int | None = field(
         default=None, metadata={"unit": UnitOfSpeed.METERS_PER_SECOND, "arg": "wspdavg"}
     )
-    uv: int = field(default=None, metadata={"unit": UV_INDEX, "arg": "uvi"})
-    solarradiation: int = field(
+    uv: int | None = field(default=None, metadata={
+                           "unit": UV_INDEX, "arg": "uvi"})
+    solarradiation: int | None = field(
         default=None,
         metadata={
             "unit": UnitOfIrradiance.WATTS_PER_SQUARE_METER,
             "arg": "solarrad",
         },
     )
-    visibility: int = field(default=None, metadata={
-                            "unit": "km", "arg": "vis"})
+    visibility: int | None = field(default=None, metadata={
+        "unit": "km", "arg": "vis"})
 
 
 IMPERIAL_TO_METRIC: Final = {
@@ -252,71 +245,72 @@ class WeatherStation:
     station_key: str
     vendor: WeatherstationVendor
 
-    station_sw_version: str = field(default=None)
-    station_client_ip: str = field(default=None)
-    update_time: float = field(default=None)
+    station_sw_version: str | None = field(default=None)
+    station_client_ip: str | None = field(default=None)
+    update_time: float | None = field(default=None)
 
-    date_utc: str = field(default=None)
+    date_utc: str | None = field(default=None)
 
-    barometer: Sensor = field(default=None, metadata={
-                              "name": "Absolute Pressure"})
-    temperature: Sensor = field(default=None, metadata={
-                                "name": "Outdoor Temperature"})
-    temperature2: Sensor = field(
+    barometer: Sensor | None = field(default=None, metadata={
+        "name": "Absolute Pressure"})
+    temperature: Sensor | None = field(default=None, metadata={
+        "name": "Outdoor Temperature"})
+    temperature2: Sensor | None = field(
         default=None, metadata={"name": "Outdoor Temperature #2"}
     )
-    temphumiditywind: Sensor = field(
+    temphumiditywind: Sensor | None = field(
         default=None,
         metadata={"name": "Temperature-Humidity-Wind Index or 'feels like'"},
     )
-    temperatureindoor: Sensor = field(
+    humidity: Sensor | None = field(default=None, metadata={
+        "name": "Outdoor Humidity"})
+    humidity2: Sensor | None = field(default=None, metadata={
+        "name": "Outdoor Humidity #2"})
+    indoortemperature: Sensor | None = field(
         default=None, metadata={"name": "Indoor Temperature"}
     )
-    humidity: Sensor = field(default=None, metadata={
-                             "name": "Outdoor Humidity"})
-    humidity2: Sensor = field(default=None, metadata={
-                              "name": "Outdoor Humidity #2"})
-    humidityindoor: Sensor = field(default=None, metadata={
-                                   "name": "Indoor Humidity"})
-    indoortemperature: Sensor = field(
-        default=None, metadata={"name": "Indoor Temperature"}
-    )
-    indoorhumidity: Sensor = field(default=None, metadata={
-                                   "name": "Indoor Humidity"})
-    dewpoint: Sensor = field(default=None, metadata={
-                             "name": "Outdoor Dewpoint"})
-    dewpointindoor: Sensor = field(default=None, metadata={
-                                   "name": "Indoor Dewpoint"})
-    rain: Sensor = field(default=None, metadata={"name": "Rain Rate"})
-    dailyrain: Sensor = field(default=None, metadata={
-                              "name": "Daily Rain Rate"})
-    winddirection: Sensor = field(default=None, metadata={
-                                  "name": "Wind Direction"})
-    windspeed: Sensor = field(default=None, metadata={"name": "Wind Speed"})
-    windgustspeed: Sensor = field(default=None, metadata={"name": "Wind Gust"})
-    windgustdirection: Sensor = field(
+    indoorhumidity: Sensor | None = field(default=None, metadata={
+        "name": "Indoor Humidity"})
+    dewpoint: Sensor | None = field(default=None, metadata={
+        "name": "Outdoor Dewpoint"})
+    dewpointindoor: Sensor | None = field(default=None, metadata={
+        "name": "Indoor Dewpoint"})
+    rain: Sensor | None = field(default=None, metadata={"name": "Rain Rate"})
+    dailyrain: Sensor | None = field(default=None, metadata={
+        "name": "Daily Rain Rate"})
+    winddirection: Sensor | None = field(default=None, metadata={
+        "name": "Wind Direction"})
+    windspeed: Sensor | None = field(
+        default=None, metadata={"name": "Wind Speed"})
+    windgustspeed: Sensor | None = field(
+        default=None, metadata={"name": "Wind Gust"})
+    windgustdirection: Sensor | None = field(
         default=None, metadata={"name": "Wind Gust Direction"}
     )
-    windspeedavg: Sensor = field(default=None, metadata={
-                                 "name": "Wind Speed Average"})
-    winddirectionavg: Sensor = field(
+    windspeedavg: Sensor | None = field(default=None, metadata={
+        "name": "Wind Speed Average"})
+    winddirectionavg: Sensor | None = field(
         default=None, metadata={"name": "Wind Direction Average"})
-    windgustspeed10m: Sensor = field(
+    windgustspeed10m: Sensor | None = field(
         default=None, metadata={"name": "Wind Gust Speed (10m)"})
-    windgustdirection10m: Sensor = field(
+    windgustdirection10m: Sensor | None = field(
         default=None, metadata={"name": "Wind Gust Direction (10m)"})
-    windchill: Sensor = field(default=None, metadata={"name": "Wind Chill"})
-    absbarometer: Sensor = field(default=None, metadata={
-                                 "name": "Absolute Pressure"})
-    weeklyrain: Sensor = field(default=None, metadata={
-                               "name": "Weekly Rain Rate"})
-    monthlyrain: Sensor = field(default=None, metadata={
-                                "name": "Monthly Rain Rate"})
-    uv: Sensor = field(default=None, metadata={"name": "UV Index"})
-    solarradiation: Sensor = field(default=None, metadata={
-                                   "name": "Solar Radiation"})
-    heatindex: Sensor = field(default=None, metadata={"name": "Heat Index"})
-    heatindexindoor: Sensor = field(
+    windchill: Sensor | None = field(
+        default=None, metadata={"name": "Wind Chill"})
+    absbarometer: Sensor | None = field(default=None, metadata={
+        "name": "Absolute Pressure"})
+    weeklyrain: Sensor | None = field(default=None, metadata={
+        "name": "Weekly Rain Rate"})
+    monthlyrain: Sensor | None = field(default=None, metadata={
+        "name": "Monthly Rain Rate"})
+    uv: Sensor | None = field(default=None, metadata={"name": "UV Index"})
+    solarradiation: Sensor | None = field(default=None, metadata={
+        "name": "Solar Radiation"})
+    visibility: Sensor | None = field(
+        default=None, metadata={"name": "Visibility"})
+    heatindex: Sensor | None = field(
+        default=None, metadata={"name": "Heat Index"})
+    heatindexindoor: Sensor | None = field(
         default=None, metadata={"name": "Indoor Heat Index"}
     )
 
@@ -343,8 +337,7 @@ class WeatherStation:
             if value is None:
                 continue
 
-            value = sensor_field.type(
-                value) * sensor_field.metadata.get("factor", 1)
+            value = value * sensor_field.metadata.get("factor", 1)
             unit = sensor_field.metadata.get("unit")
             conversion_func = IMPERIAL_TO_METRIC.get(unit)
             sensor_name = sensor_field.metadata.get(
@@ -367,13 +360,13 @@ class WeatherStation:
                 sensor_data[sensor_name] = Sensor(
                     name=sensor_name,
                     value=converted_value,
-                    unit=conversion_func.unit,
+                    unit=str(conversion_func.unit),
                 )
             else:
                 sensor_data[sensor_name] = Sensor(
                     name=sensor_name,
                     value=value,
-                    unit=unit,
+                    unit=str(unit) if unit else "",
                 )
         return WeatherStation(
             station_id=data.station_id,
@@ -405,7 +398,7 @@ class WeatherStation:
             if value is None:
                 continue
 
-            value = sensor_field.type(value)  # No idea why this is needed
+            # value = sensor_field.type(value)  # No idea why this is needed
             unit = sensor_field.metadata.get("unit")
             if unit not in [PERCENTAGE, DEGREE]:
                 # All values are shifted by 10
@@ -414,7 +407,7 @@ class WeatherStation:
             sensor_data[sensor_field.name] = Sensor(
                 name=sensor_field.name,
                 value=value,
-                unit=unit,
+                unit=str(unit) if unit else "",
             )
 
         return WeatherStation(
