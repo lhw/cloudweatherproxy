@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import logging
 import time
-from typing import Any, Callable, Coroutine, get_type_hints
+from typing import Any, get_type_hints
+from collections.abc import Callable, Coroutine
 from copy import deepcopy
 from dataclasses import fields
 
@@ -83,10 +84,7 @@ class CloudWeatherListener:
         return self.dns_servers
 
     async def _new_dataset_cb(self, dataset: WeatherStation) -> None:
-        """Internal new sensor callback
-
-        binds to self.new_sensor_cb
-        """
+        """Call new dataset callbacks."""
         for callback in self.new_dataset_cb:
             await callback(dataset)
 

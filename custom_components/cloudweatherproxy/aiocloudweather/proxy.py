@@ -20,6 +20,7 @@ class CloudWeatherProxy:
     """Proxy for forwarding data to the CloudWeather API."""
 
     def __init__(self, proxied_sinks: list[DataSink], dns_servers: list[str]):
+        """Initialize CloudWeatherProxy."""
         resolver = AsyncResolver(nameservers=dns_servers)
         self.proxied_sinks = proxied_sinks
         self.session = ClientSession(connector=TCPConnector(resolver=resolver))

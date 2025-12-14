@@ -237,9 +237,7 @@ class Sensor:
 
 @dataclass
 class WeatherStation:
-    """
-    Represents a weather station with various sensor readings.
-    """
+    """Represents a weather station with various sensor readings."""
 
     station_id: str
     station_key: str
@@ -316,8 +314,7 @@ class WeatherStation:
 
     @staticmethod
     def from_wunderground(data: WundergroundRawSensor) -> "WeatherStation":
-        """
-        Converts raw sensor data from the Wunderground API into a WeatherStation object.
+        """Convert raw sensor data from the Wunderground API into a WeatherStation object.
 
         Args:
             data (WundergroundRawSensor): The raw sensor data from the Wunderground API.
@@ -377,8 +374,7 @@ class WeatherStation:
 
     @staticmethod
     def from_weathercloud(data: WeathercloudRawSensor) -> "WeatherStation":
-        """
-        Converts raw sensor data from the Weathercloud.net API into a WeatherStation object.
+        """Convert raw sensor data from the Weathercloud.net API into a WeatherStation object.
 
         Args:
             data (WeathercloudRawSensor): The raw sensor data from the Weathercloud.net API.

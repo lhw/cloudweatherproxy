@@ -9,7 +9,7 @@ from .const import (
 
 
 def unit(output_unit):
-    """Decorator to set the output unit of the function."""
+    """Set the output unit of the function."""
 
     def decorator(func):
         func.unit = output_unit
