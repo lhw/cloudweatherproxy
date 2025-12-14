@@ -1,6 +1,7 @@
 """Registering Cloud Weather Proxy Weather Stations."""
 
 from dataclasses import fields
+from typing import get_args, get_origin
 import logging
 import time
 
@@ -32,8 +33,12 @@ async def async_setup_entry(
         new_sensors: list[CloudWeatherEntity] = []
 
         for field in fields(station):
-            if field.type is not Sensor:
-                continue
+            field_type = field.type
+            if field_type is not Sensor:
+                origin = get_origin(field_type)
+                args = get_args(field_type)
+                if Sensor not in args:
+                    continue
             sensor: Sensor = getattr(station, field.name)
             if sensor is None:
                 continue
