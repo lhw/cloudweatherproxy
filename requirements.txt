@@ -1,5 +1,5 @@
 pip>=24.1,<26.0
-ruff==0.12.*
-colorlog==6.9.*
+ruff>=0.12,<=0.20
+colorlog>=6,0.0,<7.0.0
 pycares<5.0.0,>=4.0.0
 homeassistant==2025.12.3
