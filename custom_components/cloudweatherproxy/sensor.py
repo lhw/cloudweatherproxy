@@ -1,7 +1,9 @@
 """Registering Cloud Weather Proxy Weather Stations."""
 
+from __future__ import annotations
+
 from dataclasses import fields
-from typing import get_args, get_origin
+from .aiocloudweather.utils import resolve_caster
 import logging
 import time
 
@@ -13,7 +15,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.typing import StateType
 
 from .const import DOMAIN, UNIT_DESCRIPTION_MAPPING
 
@@ -27,19 +28,20 @@ async def async_setup_entry(
     cloudweather: CloudWeatherListener = hass.data[DOMAIN][entry.entry_id]
 
     async def _new_dataset(station: WeatherStation) -> None:
-        known_sensors: dict[str, CloudWeatherEntity] = hass.data[DOMAIN][
-            "known_sensors"
-        ]
+        known_sensors: dict[str, CloudWeatherEntity] = hass.data[DOMAIN].setdefault(
+            "known_sensors", {}
+        )
         new_sensors: list[CloudWeatherEntity] = []
 
         for field in fields(station):
             field_type = field.type
-            if field_type is not Sensor:
-                origin = get_origin(field_type)
-                args = get_args(field_type)
-                if Sensor not in args:
+            caster = resolve_caster(field_type)
+            if caster is not Sensor and caster is not None:
+                if getattr(caster, "__name__", "") != getattr(Sensor, "__name__", ""):
                     continue
-            sensor: Sensor = getattr(station, field.name)
+            elif caster is None:
+                continue
+            sensor: Sensor | None = getattr(station, field.name)
             if sensor is None:
                 continue
             unique_id = f"{station.station_id}-{sensor.name}"
@@ -48,10 +50,8 @@ async def async_setup_entry(
                 await known_sensors[unique_id].update_sensor(station)
                 continue
 
-            new_sensor = CloudWeatherEntity(
-                sensor, station, str(
-                    field.metadata.get("name"))
-            )
+            meta_name = field.metadata.get("name") or sensor.name
+            new_sensor = CloudWeatherEntity(sensor, station, str(meta_name))
             known_sensors[unique_id] = new_sensor
             new_sensors.append(new_sensor)
 
@@ -74,6 +74,9 @@ class CloudWeatherBaseEntity(Entity):
     _attr_has_entity_name = True
     _attr_should_poll = False
 
+    sensor: Sensor | None
+    station: WeatherStation
+
     def __init__(self, sensor: Sensor, station: WeatherStation) -> None:
         """Construct the entity."""
         self.sensor = sensor
@@ -84,13 +87,10 @@ class CloudWeatherBaseEntity(Entity):
             name=f"Weatherstation {station.station_id}",
             identifiers={(DOMAIN, station.station_id)},
             sw_version=station.station_sw_version,
-            manufacturer=station.vendor,
+            manufacturer=getattr(station.vendor, "value", str(station.vendor)),
         )
-
-    @property
-    def available(self) -> bool:
-        """Return whether the state is based on actual reading from device."""
-        return (self.station.update_time + 5 * 60) > time.monotonic()
+        self._attr_available = (station.update_time is not None) and (
+            (station.update_time + 5 * 60) > time.monotonic())
 
 
 class CloudWeatherEntity(CloudWeatherBaseEntity, SensorEntity):
@@ -104,24 +104,33 @@ class CloudWeatherEntity(CloudWeatherBaseEntity, SensorEntity):
     ) -> None:
         """Initialize the sensor entity."""
         super().__init__(sensor, station)
-        self._name = name
-        description = UNIT_DESCRIPTION_MAPPING[sensor.unit]
-        self.entity_description = description
-
-    @property
-    def native_value(self) -> StateType | None:
-        """Return the state of the entity."""
-        return self.sensor.value
-
-    @property
-    def name(self) -> str:
-        """Return the name of the entity."""
-        return self._name
+        self._attr_name = name
+        self._attr_native_value = sensor.value if sensor else None
+        description = UNIT_DESCRIPTION_MAPPING.get(sensor.unit)
+        if description is None:
+            for key, val in UNIT_DESCRIPTION_MAPPING.items():
+                try:
+                    if str(key) == sensor.unit:
+                        description = val
+                        break
+                except Exception:
+                    continue
+        if description is not None:
+            self.entity_description = description
 
     async def update_sensor(self, station: WeatherStation) -> None:
         """Update the entity."""
         self.station = station
-        self.sensor = getattr(station, self.sensor.name)
+        old_name = self.sensor.name if self.sensor is not None else None
+        if old_name is None:
+            return
+        new_sensor = getattr(station, old_name, None)
+        self.sensor = new_sensor
+
+        self._attr_native_value = self.sensor.value if self.sensor else None
+        self._attr_available = (station.update_time is not None) and (
+            (station.update_time + 5 * 60) > time.monotonic())
+
         _LOGGER.debug("Updating %s [%s] with update time %s",
                       self.unique_id, self.sensor, self.station.update_time)
         self.async_write_ha_state()

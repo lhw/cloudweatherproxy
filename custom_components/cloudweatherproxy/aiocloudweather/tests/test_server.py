@@ -1,4 +1,4 @@
-import pytest
+import pytest  # type: ignore[import-not-found]
 from aiohttp import web
 from aiocloudweather.server import CloudWeatherListener
 
@@ -7,8 +7,9 @@ from aiocloudweather.server import CloudWeatherListener
 async def client(aiohttp_client):
     app = web.Application()
     listener = CloudWeatherListener()
-    app.router.add_get("/weatherstation/updateweatherstation.php", listener.handler)
-    app.router.add_get("/v01/set/{path:.*}", listener.handler)
+    app.router.add_get(
+        "/wunderground/weatherstation/updateweatherstation.php", listener.handler)
+    app.router.add_get("/weathercloud/v01/set/{path:.*}", listener.handler)
     await listener.start()
     client = await aiohttp_client(app)
     try:
@@ -27,9 +28,9 @@ async def test_handler(client):
         assert response.status == 200
         assert await response.text() == "OK"
 
-    async for c in client:
-        for file_path in data_files:
-            with open(file_path, "r") as file:
-                for line in file:
-                    request_url = line.strip()
-                    await test_request(c, request_url)
+    c = client
+    for file_path in data_files:
+        with open(file_path, "r") as file:
+            for line in file:
+                request_url = line.strip()
+                await test_request(c, request_url)

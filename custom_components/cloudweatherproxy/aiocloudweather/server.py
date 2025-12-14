@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 import time
-from typing import Any, get_type_hints, get_args
+from typing import Any, get_type_hints
 from collections.abc import Callable, Coroutine
 from copy import deepcopy
 from dataclasses import fields
@@ -116,20 +116,10 @@ class CloudWeatherListener:
             if value is not None:
                 field_type = type_hints[field.name]
 
-                # Resolve Optional/Union types (PEP 604 and typing.Union)
-                args = get_args(field_type)
-                if args:
-                    # pick the first non-None type if present
-                    non_none = [t for t in args if t is not type(None)]
-                    caster = non_none[0] if non_none else args[0]
-                else:
-                    caster = field_type
+                from .utils import cast_value
 
                 try:
-                    if callable(caster):
-                        instance_data[field.name] = caster(value)
-                    else:
-                        instance_data[field.name] = value
+                    instance_data[field.name] = cast_value(field_type, value)
                 except (ValueError, TypeError) as e:
                     _LOGGER.warning(
                         "Failed to cast field %s (arg: %s) value '%s' to %s: %s",
@@ -153,20 +143,11 @@ class CloudWeatherListener:
         for arg, field in dfields.items():
             if arg in data:
                 value = data[arg]
-                # Handle Optional/Union types (e.g. int | None)
-                field_type = type_hints[field.name]
-                args = get_args(field_type)
-                if args:
-                    non_none = [t for t in args if t is not type(None)]
-                    caster = non_none[0] if non_none else args[0]
-                else:
-                    caster = field_type
+                from .utils import cast_value
 
+                field_type = type_hints[field.name]
                 try:
-                    if callable(caster):
-                        instance_data[field.name] = caster(value)
-                    else:
-                        instance_data[field.name] = value
+                    instance_data[field.name] = cast_value(field_type, value)
                 except (ValueError, TypeError) as e:
                     _LOGGER.warning(
                         "Failed to cast field %s (arg: %s) value '%s' to %s: %s",
