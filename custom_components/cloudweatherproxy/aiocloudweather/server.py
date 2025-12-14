@@ -116,8 +116,10 @@ class CloudWeatherListener:
             if value is not None:
                 field_type = type_hints[field.name]
 
+                from .utils import cast_value
+
                 try:
-                    instance_data[field.name] = field_type(value)
+                    instance_data[field.name] = cast_value(field_type, value)
                 except (ValueError, TypeError) as e:
                     _LOGGER.warning(
                         "Failed to cast field %s (arg: %s) value '%s' to %s: %s",
@@ -141,16 +143,11 @@ class CloudWeatherListener:
         for arg, field in dfields.items():
             if arg in data:
                 value = data[arg]
-                # Handle Optional types (e.g. int | None)
-                field_type = type_hints[field.name]
-                if hasattr(field_type, "__args__"):
-                    field_type = next(
-                        (t for t in field_type.__args__ if t is not type(None)),
-                        field_type
-                    )
+                from .utils import cast_value
 
+                field_type = type_hints[field.name]
                 try:
-                    instance_data[field.name] = field_type(value)
+                    instance_data[field.name] = cast_value(field_type, value)
                 except (ValueError, TypeError) as e:
                     _LOGGER.warning(
                         "Failed to cast field %s (arg: %s) value '%s' to %s: %s",

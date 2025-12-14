@@ -336,7 +336,9 @@ class WeatherStation:
 
             value = value * sensor_field.metadata.get("factor", 1)
             unit = sensor_field.metadata.get("unit")
-            conversion_func = IMPERIAL_TO_METRIC.get(unit)
+            # metadata.get returns Any; mypy may complain when using it as a dict key
+            conversion_func = IMPERIAL_TO_METRIC.get(
+                unit)  # type: ignore[arg-type]
             sensor_name = sensor_field.metadata.get(
                 "alternative_for", sensor_field.name
             )
@@ -365,11 +367,13 @@ class WeatherStation:
                     value=value,
                     unit=str(unit) if unit else "",
                 )
+        from typing import Any, cast
+
         return WeatherStation(
             station_id=data.station_id,
             station_key=data.station_key,
             vendor=WeatherstationVendor.WUNDERGROUND,
-            **sensor_data,
+            **cast(dict[str, Any], sensor_data),
         )
 
     @staticmethod
@@ -398,7 +402,7 @@ class WeatherStation:
             unit = sensor_field.metadata.get("unit")
             if unit not in [PERCENTAGE, DEGREE]:
                 # All values are shifted by 10
-                value: float = float(value) / 10
+                value = float(value) / 10
 
             sensor_data[sensor_field.name] = Sensor(
                 name=sensor_field.name,
@@ -406,9 +410,11 @@ class WeatherStation:
                 unit=str(unit) if unit else "",
             )
 
+        from typing import Any, cast
+
         return WeatherStation(
             station_id=str(data.station_id),
             station_key=str(data.station_key),
             vendor=WeatherstationVendor.WEATHERCLOUD,
-            **sensor_data,
+            **cast(dict[str, Any], sensor_data),
         )

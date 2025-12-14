@@ -50,7 +50,7 @@ def main() -> None:
 
     _LOGGER.info("Firing up webserver to listen on port %s", sys.argv[1])
     cloudweather_server = CloudWeatherListener(
-        port=sys.argv[1], proxy_sinks=[DataSink.WUNDERGROUND]
+        port=int(sys.argv[1]), proxy_sinks=[DataSink.WUNDERGROUND]
     )
 
     cloudweather_server.new_dataset_cb.append(my_handler)
