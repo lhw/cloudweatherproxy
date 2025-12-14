@@ -1,8 +1,9 @@
 """The Wunderground Receiver integration."""
 
 import logging
-from aiocloudweather import CloudWeatherListener
-from aiocloudweather.proxy import DataSink
+from .aiocloudweather import CloudWeatherListener
+from .aiocloudweather.proxy import DataSink
+from .aiocloudweather.utils import LimitedSizeQueue
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
@@ -32,6 +33,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                              dns_servers=dns_servers)
     )
     hass.data[DOMAIN].setdefault("known_sensors", {})
+    hass.data[DOMAIN].setdefault("log_queue", LimitedSizeQueue(maxsize=50))
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 

@@ -2,7 +2,7 @@
     "name": "Cloud Weather Proxy",
     "filename": "cloudweatherproxy.zip",
     "hide_default_branch": true,
-    "homeassistant": "2024.6.0",
+    "homeassistant": "2025.12.3",
     "render_readme": true,
     "zip_release": true
 }
