@@ -3,7 +3,7 @@
 from enum import Enum
 import logging
 from aiohttp import web, TCPConnector, ClientSession, ClientResponse
-from urllib.parse import quote
+from urllib.parse import parse_qsl, urlencode
 from aiohttp.resolver import AsyncResolver
 
 _LOGGER = logging.getLogger(__name__)
@@ -32,18 +32,40 @@ class CloudWeatherProxy:
 
     async def forward_wunderground(self, request: web.Request) -> ClientResponse:
         """Forward Wunderground data to their API."""
-        if "%" in request.query_string:
-            query_string = request.query_string
-        else:
-            query_string = quote(request.query_string).replace("%20", "+")
-        url = f"https://rtupdate.wunderground.com/weatherstation/updateweatherstation.php?{query_string}"
+        if not request.query_string:
+            _LOGGER.error(
+                "Wunderground request missing query string: %s", request.path
+            )
+            raise web.HTTPBadRequest(
+                text="Missing query string for Wunderground request")
+
+        pairs = parse_qsl(request.query_string, keep_blank_values=True)
+        query_string = urlencode(pairs, doseq=True)
+
+        url = (
+            f"https://rtupdate.wunderground.com/weatherstation/updateweatherstation.php?{query_string}"
+        )
         _LOGGER.debug("Forwarding Wunderground data: %s", url)
         return await self.session.get(url)
 
     async def forward_weathercloud(self, request: web.Request) -> ClientResponse:
         """Forward WeatherCloud data to their API."""
         new_path = request.path[request.path.index("/v01/set"):]
+        # If there's no dataset in the path (e.g. just /v01/set) and no
+        # query string, nothing useful can be forwarded.
+        path_after = new_path[len("/v01/set"):]
+        if (not path_after or path_after == "/") and not request.query_string:
+            _LOGGER.error(
+                "WeatherCloud request missing payload: %s", request.path
+            )
+            raise web.HTTPBadRequest(
+                text="Missing path payload for WeatherCloud request")
+
         url = f"https://api.weathercloud.net{new_path}"
+        if request.query_string:
+            pairs = parse_qsl(request.query_string, keep_blank_values=True)
+            query_string = urlencode(pairs, doseq=True)
+            url = f"{url}?{query_string}"
         _LOGGER.debug("Forwarding WeatherCloud data: %s", url)
         return await self.session.get(url)
 
