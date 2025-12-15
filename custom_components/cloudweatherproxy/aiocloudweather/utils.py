@@ -81,21 +81,6 @@ class DiagnosticsLogHandler(logging.Handler):
             # Ensure logging doesn't raise
             self.handleError(record)
 
-
-def get_buffered_logs(max_items: int | None = None) -> list[str]:
-    """Return a snapshot of buffered log lines.
-
-    Does not consume the buffer. If `max_items` is provided, returns only
-    the most recent N entries.
-    """
-    q = LOG_BUFFER
-    # Access underlying deque of asyncio.Queue
-    items = list(getattr(q, "_queue", []))
-    if max_items is not None:
-        return items[-max_items:]
-    return items
-
-
 def resolve_caster(type_hint: Any) -> Any:
     """Resolve a usable caster from a typing hint.
 
