@@ -6,6 +6,7 @@ from homeassistant.config_entries import ConfigEntry
 
 from .sensor import CloudWeatherEntity
 from .const import DOMAIN
+from .aiocloudweather.utils import get_buffered_logs
 
 
 async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: ConfigEntry) -> dict[str, Any]:
@@ -17,4 +18,7 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: ConfigE
     return {
         "known_sensors": known_sensors,  # TODO: String representation sucks
         "entry_data": entry.data,  # TODO: config representation sucks
+        "logs": {
+            "recent": get_buffered_logs(max_items=200),
+        },
     }
