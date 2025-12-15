@@ -12,6 +12,7 @@ from dataclasses import fields
 from aiohttp import web, ClientResponse
 
 from .proxy import CloudWeatherProxy, DataSink
+from .utils import cast_value
 from .station import (
     WundergroundRawSensor,
     WeathercloudRawSensor,
@@ -98,32 +99,18 @@ class CloudWeatherListener:
             for f in fields(WundergroundRawSensor)
             if "arg" in f.metadata
         }
-
-        # Create a case-insensitive mapping for arguments
-        # Priority is given to exact matches (important for solarRadiation vs solarradiation)
-        data_lower = {k.lower(): v for k, v in data.items()}
-
         type_hints = get_type_hints(WundergroundRawSensor)
         instance_data = {}
 
         for arg, field in dfields.items():
-            value = None
             if arg in data:
                 value = data[arg]
-            elif arg.lower() in data_lower:
-                value = data_lower[arg.lower()]
-
-            if value is not None:
-                field_type = type_hints[field.name]
-
-                from .utils import cast_value
-
                 try:
-                    instance_data[field.name] = cast_value(field_type, value)
-                except (ValueError, TypeError) as e:
+                    instance_data[field.name] = cast_value(
+                        type_hints[field.name], value)
+                except (ValueError, TypeError) as err:
                     _LOGGER.warning(
-                        "Failed to cast field %s (arg: %s) value '%s' to %s: %s",
-                        field.name, arg, value, field_type, e
+                        "Failed to cast field %s value '%s': %s", field.name, value, err
                     )
 
         return WeatherStation.from_wunderground(WundergroundRawSensor(**instance_data))
@@ -143,15 +130,12 @@ class CloudWeatherListener:
         for arg, field in dfields.items():
             if arg in data:
                 value = data[arg]
-                from .utils import cast_value
-
-                field_type = type_hints[field.name]
                 try:
-                    instance_data[field.name] = cast_value(field_type, value)
-                except (ValueError, TypeError) as e:
+                    instance_data[field.name] = cast_value(
+                        type_hints[field.name], value)
+                except (ValueError, TypeError) as err:
                     _LOGGER.warning(
-                        "Failed to cast field %s (arg: %s) value '%s' to %s: %s",
-                        field.name, arg, value, field_type, e
+                        "Failed to cast field %s value '%s': %s", field.name, value, err
                     )
 
         return WeatherStation.from_weathercloud(WeathercloudRawSensor(**instance_data))
