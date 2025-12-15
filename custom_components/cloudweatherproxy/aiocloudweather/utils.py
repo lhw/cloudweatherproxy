@@ -63,6 +63,7 @@ class DiagnosticsLogHandler(logging.Handler):
     """
 
     def __init__(self, queue: LimitedSizeQueue | None = None) -> None:
+        """Initialize the diagnostics log handler."""
         super().__init__()
         self.queue = queue or LOG_BUFFER
         # Use a simple formatter if none provided
@@ -70,6 +71,7 @@ class DiagnosticsLogHandler(logging.Handler):
             "%(asctime)s %(levelname)s %(name)s: %(message)s"))
 
     def emit(self, record: logging.LogRecord) -> None:
+        """Emit a log record after masking credentials."""
         try:
             msg = self.format(record)
             msg = _mask_credentials(msg)
