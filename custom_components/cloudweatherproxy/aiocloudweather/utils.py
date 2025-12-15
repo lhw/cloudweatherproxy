@@ -43,15 +43,15 @@ def _mask_credentials(text: str) -> str:
     - Replaces station IDs in log messages (e.g., "Found new station: xyz").
     """
     # Replace query params like ID=... and PASSWORD=...
-    text = re.sub(r"(?i)(ID)=([^&\s]+)", r"\1=REMOVED", text)
-    text = re.sub(r"(?i)(PASSWORD)=([^&\s]+)", r"\1=REMOVED", text)
+    text = re.sub(r"(?i)(ID)=([^&\s]+)", r"\1=STATIONID", text)
+    text = re.sub(r"(?i)(PASSWORD)=([^&\s]+)", r"\1=SECRET", text)
 
     # Replace path segments like /wid/<val>/ and /key/<val>/
-    text = re.sub(r"(?i)(/wid/)[^/\\s]+", r"\1=REMOVED", text)
-    text = re.sub(r"(?i)(/key/)[^/\\s]+", r"\1=REMOVED", text)
+    text = re.sub(r"(?i)(/wid/)([^/\s]+)", r"\1STATIONID", text)
+    text = re.sub(r"(?i)(/key/)([^/\s]+)", r"\1SECRET", text)
 
     # Replace station IDs in log messages like "Found new station: <id>"
-    text = re.sub(r"(?i)(station:\s+)([^\s]+)", r"\g<1>REMOVED", text)
+    text = re.sub(r"(?i)(station:\s+)([^\s]+)", r"\g<1>STATIONID", text)
 
     return text
 
@@ -80,6 +80,7 @@ class DiagnosticsLogHandler(logging.Handler):
         except Exception:
             # Ensure logging doesn't raise
             self.handleError(record)
+
 
 def resolve_caster(type_hint: Any) -> Any:
     """Resolve a usable caster from a typing hint.
