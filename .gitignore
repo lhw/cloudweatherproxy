@@ -9,8 +9,9 @@ __pycache__
 # misc
 .coverage
 .vscode
+.venv
+.ruff_cache
 coverage.xml
-
 
 # Home Assistant configuration
 config/*

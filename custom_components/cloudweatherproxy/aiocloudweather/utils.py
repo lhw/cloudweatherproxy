@@ -40,6 +40,7 @@ def _mask_credentials(text: str) -> str:
 
     - Replaces query parameters `ID` and `PASSWORD` with a fixed placeholder.
     - Replaces path segments `wid/<val>` and `key/<val>` with standardized values.
+    - Replaces station IDs in log messages (e.g., "Found new station: xyz").
     """
     # Replace query params like ID=... and PASSWORD=...
     text = re.sub(r"(?i)(ID)=([^&\s]+)", r"\1=12345", text)
@@ -48,6 +49,9 @@ def _mask_credentials(text: str) -> str:
     # Replace path segments like /wid/<val>/ and /key/<val>/
     text = re.sub(r"(?i)(/wid/)[^/\\s]+", r"\1" + "12345", text)
     text = re.sub(r"(?i)(/key/)[^/\\s]+", r"\1" + "12345", text)
+
+    # Replace station IDs in log messages like "Found new station: <id>"
+    text = re.sub(r"(?i)(station:\s+)([^\s]+)", r"\g<1>12345", text)
 
     return text
 
