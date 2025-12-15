@@ -134,6 +134,7 @@ class CloudWeatherListener:
                     instance_data[field.name] = cast_value(
                         type_hints[field.name], value)
                 except (ValueError, TypeError) as err:
+
                     _LOGGER.warning(
                         "Failed to cast field %s value '%s': %s", field.name, value, err
                     )
