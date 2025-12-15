@@ -5,7 +5,7 @@ from enum import Enum
 import logging
 from typing import Final
 
-from aiocloudweather.conversion import (
+from .conversion import (
     fahrenheit_to_celsius,
     in_to_mm,
     inhg_to_hpa,

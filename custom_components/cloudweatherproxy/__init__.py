@@ -1,9 +1,10 @@
 """The Wunderground Receiver integration."""
 
 import logging
+import contextlib
 from .aiocloudweather import CloudWeatherListener
 from .aiocloudweather.proxy import DataSink
-from .aiocloudweather.utils import LimitedSizeQueue
+from .aiocloudweather.utils import LimitedSizeQueue, DiagnosticsLogHandler
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
@@ -33,7 +34,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                              dns_servers=dns_servers)
     )
     hass.data[DOMAIN].setdefault("known_sensors", {})
-    hass.data[DOMAIN].setdefault("log_queue", LimitedSizeQueue(maxsize=50))
+    # Per-HASS small queue to hold most recent integration logs for diagnostics
+    per_hass_queue = hass.data[DOMAIN].setdefault(
+        "log_queue", LimitedSizeQueue(maxsize=100))
+
+    # Attach integration-scoped diagnostics handler so logs are captured
+    # and can be included in the HA diagnostics download.
+    handler = DiagnosticsLogHandler(queue=per_hass_queue)
+    # Attach to the package logger (custom_components.cloudweatherproxy)
+    integration_logger = logging.getLogger(__package__)
+    integration_logger.addHandler(handler)
+    hass.data[DOMAIN]["log_handler"] = handler
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
@@ -47,6 +58,14 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
 
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
+        # Detach diagnostics handler if present
+        handler = hass.data[DOMAIN].pop("log_handler", None)
+        if handler is not None:
+            integration_logger = logging.getLogger(__package__)
+            with contextlib.suppress(Exception):
+                integration_logger.removeHandler(handler)
+                handler.close()
+
         hass.data[DOMAIN].pop(entry.entry_id)
 
     return unload_ok

@@ -7,9 +7,9 @@ from dataclasses import Field, fields
 import logging
 import sys
 
-from aiocloudweather import CloudWeatherListener, WeatherStation
-from aiocloudweather.proxy import DataSink
-from aiocloudweather.station import Sensor
+from .server import CloudWeatherListener
+from .proxy import DataSink
+from .station import Sensor, WeatherStation
 
 _LOGGER = logging.getLogger(__name__)
 
