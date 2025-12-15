@@ -43,15 +43,15 @@ def _mask_credentials(text: str) -> str:
     - Replaces station IDs in log messages (e.g., "Found new station: xyz").
     """
     # Replace query params like ID=... and PASSWORD=...
-    text = re.sub(r"(?i)(ID)=([^&\s]+)", r"\1=<REMOVED>", text)
-    text = re.sub(r"(?i)(PASSWORD)=([^&\s]+)", r"\1=<REMOVED>", text)
+    text = re.sub(r"(?i)(ID)=([^&\s]+)", r"\1=REMOVED", text)
+    text = re.sub(r"(?i)(PASSWORD)=([^&\s]+)", r"\1=REMOVED", text)
 
     # Replace path segments like /wid/<val>/ and /key/<val>/
-    text = re.sub(r"(?i)(/wid/)[^/\\s]+", r"\1" + "<REMOVED>", text)
-    text = re.sub(r"(?i)(/key/)[^/\\s]+", r"\1" + "<REMOVED>", text)
+    text = re.sub(r"(?i)(/wid/)[^/\\s]+", r"\1=REMOVED", text)
+    text = re.sub(r"(?i)(/key/)[^/\\s]+", r"\1=REMOVED", text)
 
     # Replace station IDs in log messages like "Found new station: <id>"
-    text = re.sub(r"(?i)(station:\s+)([^\s]+)", r"\g<1><REMOVED>", text)
+    text = re.sub(r"(?i)(station:\s+)([^\s]+)", r"\g<1>REMOVED", text)
 
     return text
 
