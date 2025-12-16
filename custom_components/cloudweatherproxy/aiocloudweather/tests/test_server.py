@@ -1,6 +1,8 @@
 import pytest  # type: ignore[import-not-found]
 from aiohttp import web
-from aiocloudweather.server import CloudWeatherListener
+from cloudweatherproxy.aiocloudweather.server import (
+    CloudWeatherListener,
+)
 
 
 @pytest.fixture

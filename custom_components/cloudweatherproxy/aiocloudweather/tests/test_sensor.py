@@ -1,4 +1,4 @@
-from aiocloudweather.station import (
+from cloudweatherproxy.aiocloudweather.station import (
     WeatherStation,
     WundergroundRawSensor,
     WeathercloudRawSensor,
