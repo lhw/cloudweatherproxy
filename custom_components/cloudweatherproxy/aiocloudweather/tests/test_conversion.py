@@ -1,4 +1,4 @@
-from aiocloudweather.conversion import (
+from cloudweatherproxy.aiocloudweather.conversion import (
     fahrenheit_to_celsius,
     in_to_mm,
     inhg_to_hpa,
