@@ -1,8 +1,11 @@
 """The Wunderground Receiver integration."""
 
+from __future__ import annotations
+
 import logging
 import contextlib
 from dataclasses import dataclass, field
+
 from .aiocloudweather import CloudWeatherListener
 from .aiocloudweather.proxy import DataSink
 from .aiocloudweather.utils import LimitedSizeQueue, DiagnosticsLogHandler
@@ -13,12 +16,11 @@ from homeassistant.core import HomeAssistant
 
 from .const import CONF_DNS_SERVERS, CONF_WEATHERCLOUD_PROXY, CONF_WUNDERGROUND_PROXY, DOMAIN
 from .web import WeathercloudReceiver, WundergroundReceiver
+from .entity import CloudWeatherEntity
 
 PLATFORMS: list[Platform] = [Platform.SENSOR]
 
 _LOGGER = logging.getLogger(__name__)
-
-type CloudWeatherProxyConfigEntry = ConfigEntry[RuntimeData]
 
 
 @dataclass
@@ -26,7 +28,10 @@ class RuntimeData:
     """Runtime data for Cloud Weather Proxy."""
 
     listener: CloudWeatherListener
-    known_sensors: dict[str, object] = field(default_factory=dict)
+    known_sensors: dict[str, CloudWeatherEntity] = field(default_factory=dict)
+
+
+CloudWeatherProxyConfigEntry = ConfigEntry[RuntimeData]
 
 
 @dataclass
@@ -82,6 +87,9 @@ async def async_unload_entry(hass: HomeAssistant, entry: CloudWeatherProxyConfig
     """Unload a config entry."""
 
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
+        # Cleanup listener resources (proxy session)
+        await entry.runtime_data.listener.stop()
+
         # Check if this is the last config entry for this domain
         remaining_entries = [
             e for e in hass.config_entries.async_entries(DOMAIN) if e.entry_id != entry.entry_id

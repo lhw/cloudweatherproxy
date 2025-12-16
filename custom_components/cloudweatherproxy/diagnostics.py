@@ -2,10 +2,9 @@
 
 from typing import Any
 from homeassistant.core import HomeAssistant
-from homeassistant.config_entries import ConfigEntry
 
 from . import CloudWeatherProxyConfigEntry, DomainData
-from .sensor import CloudWeatherEntity
+from .entity import CloudWeatherEntity
 from .const import DOMAIN, CONF_WUNDERGROUND_PROXY, CONF_WEATHERCLOUD_PROXY, CONF_DNS_SERVERS
 
 
