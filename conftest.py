@@ -1,3 +1,10 @@
+"""Pytest configuration for the test suite.
+
+This module ensures `custom_components` is available on `sys.path`
+so the vendored `cloudweatherproxy` package can be imported when
+running `pytest` from the repository root.
+"""
+
 import os
 import sys
 
