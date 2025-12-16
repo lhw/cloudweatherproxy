@@ -66,7 +66,7 @@ class CloudWeatherProxyConfigFlow(ConfigFlow, domain=DOMAIN):
         """Add reconfigure step to allow to reconfigure a config entry."""
 
         config_entry: ConfigEntry = self._get_reconfigure_entry()
-        listener: CloudWeatherListener = self.hass.data[DOMAIN][config_entry.entry_id]
+        listener: CloudWeatherListener = config_entry.runtime_data.listener
         _LOGGER.debug("Reconfiguring Cloud Weather Proxy: %s", listener)
         current_proxy_settings = listener.get_active_proxies() or []
         current_dns_servers = listener.get_dns_servers()

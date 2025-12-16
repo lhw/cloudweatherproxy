@@ -2,25 +2,27 @@
 
 from typing import Any
 from homeassistant.core import HomeAssistant
-from homeassistant.config_entries import ConfigEntry
 
-from .sensor import CloudWeatherEntity
+from . import CloudWeatherProxyConfigEntry, DomainData
+from .entity import CloudWeatherEntity
 from .const import DOMAIN, CONF_WUNDERGROUND_PROXY, CONF_WEATHERCLOUD_PROXY, CONF_DNS_SERVERS
 
 
-async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: ConfigEntry) -> dict[str, Any]:
+async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: CloudWeatherProxyConfigEntry) -> dict[str, Any]:
     """Return config entry diagnostics."""
 
-    known_sensors: dict[str,
-                        CloudWeatherEntity] = hass.data[DOMAIN]["known_sensors"]
+    runtime_data = entry.runtime_data
+    known_sensors: dict[str, CloudWeatherEntity] = runtime_data.known_sensors
 
-    # Get the per-HASS log queue
-    log_queue = hass.data[DOMAIN].get("log_queue")
+    # Get the per-HASS log queue from domain-wide data
     logs = []
-    if log_queue:
-        # Access underlying deque of asyncio.Queue
-        items = list(getattr(log_queue, "_queue", []))
-        logs = items[-100:]
+    if DOMAIN in hass.data:
+        domain_data: DomainData = hass.data[DOMAIN]
+        log_queue = domain_data.log_queue
+        if log_queue:
+            # Access underlying deque of asyncio.Queue
+            items = list(getattr(log_queue, "_queue", []))
+            logs = items[-100:]
 
     # Format known_sensors for human readability with masked station IDs
     # Create a mapping of station IDs to unique identifiers to prevent collisions
@@ -46,6 +48,14 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: ConfigE
             "enabled": entity.enabled,
         }
 
+    # Apply masking to logs
+    masked_logs = []
+    for log in logs:
+        masked_log = log
+        for station_id, masked_id in station_id_mapping.items():
+            masked_log = masked_log.replace(station_id, masked_id)
+        masked_logs.append(masked_log)
+
     formatted_entry_data = {
         "proxy_wunderground": entry.data.get(CONF_WUNDERGROUND_PROXY, False),
         "proxy_weathercloud": entry.data.get(CONF_WEATHERCLOUD_PROXY, False),
@@ -56,6 +66,6 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: ConfigE
         "known_sensors": formatted_sensors,
         "entry_data": formatted_entry_data,
         "logs": {
-            "recent": logs,
+            "recent": masked_logs,
         },
     }

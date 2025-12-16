@@ -220,3 +220,5 @@ class CloudWeatherListener:
         """Stop listening."""
         if self.site:
             await self.site.stop()
+        if self.proxy:
+            await self.proxy.close()
