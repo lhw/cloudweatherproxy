@@ -16,21 +16,22 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+from . import CloudWeatherProxyConfigEntry
 from .const import DOMAIN, UNIT_DESCRIPTION_MAPPING
 
 _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+    hass: HomeAssistant, entry: CloudWeatherProxyConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     """Register new weather stations."""
-    cloudweather: CloudWeatherListener = hass.data[DOMAIN][entry.entry_id]
+    runtime_data = entry.runtime_data
+    cloudweather: CloudWeatherListener = runtime_data.listener
 
     async def _new_dataset(station: WeatherStation) -> None:
-        known_sensors: dict[str, CloudWeatherEntity] = hass.data[DOMAIN].setdefault(
-            "known_sensors", {}
-        )
+        known_sensors: dict[str,
+                            CloudWeatherEntity] = runtime_data.known_sensors
         new_sensors: list[CloudWeatherEntity] = []
 
         for field in fields(station):
@@ -60,8 +61,6 @@ async def async_setup_entry(
             async_add_entities(new_sensors)
         for nsensor in new_sensors:
             nsensor.async_write_ha_state()
-
-        hass.data[DOMAIN]["known_sensors"] = known_sensors
 
     cloudweather.new_dataset_cb.append(_new_dataset)
     entry.async_on_unload(

@@ -4,23 +4,26 @@ from typing import Any
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 
+from . import CloudWeatherProxyConfigEntry, DomainData
 from .sensor import CloudWeatherEntity
 from .const import DOMAIN, CONF_WUNDERGROUND_PROXY, CONF_WEATHERCLOUD_PROXY, CONF_DNS_SERVERS
 
 
-async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: ConfigEntry) -> dict[str, Any]:
+async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: CloudWeatherProxyConfigEntry) -> dict[str, Any]:
     """Return config entry diagnostics."""
 
-    known_sensors: dict[str,
-                        CloudWeatherEntity] = hass.data[DOMAIN]["known_sensors"]
+    runtime_data = entry.runtime_data
+    known_sensors: dict[str, CloudWeatherEntity] = runtime_data.known_sensors
 
-    # Get the per-HASS log queue
-    log_queue = hass.data[DOMAIN].get("log_queue")
+    # Get the per-HASS log queue from domain-wide data
     logs = []
-    if log_queue:
-        # Access underlying deque of asyncio.Queue
-        items = list(getattr(log_queue, "_queue", []))
-        logs = items[-100:]
+    if DOMAIN in hass.data:
+        domain_data: DomainData = hass.data[DOMAIN]
+        log_queue = domain_data.log_queue
+        if log_queue:
+            # Access underlying deque of asyncio.Queue
+            items = list(getattr(log_queue, "_queue", []))
+            logs = items[-100:]
 
     # Format known_sensors for human readability with masked station IDs
     # Create a mapping of station IDs to unique identifiers to prevent collisions
