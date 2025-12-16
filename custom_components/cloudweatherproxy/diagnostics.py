@@ -48,6 +48,14 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: CloudWe
             "enabled": entity.enabled,
         }
 
+    # Apply masking to logs
+    masked_logs = []
+    for log in logs:
+        masked_log = log
+        for station_id, masked_id in station_id_mapping.items():
+            masked_log = masked_log.replace(station_id, masked_id)
+        masked_logs.append(masked_log)
+
     formatted_entry_data = {
         "proxy_wunderground": entry.data.get(CONF_WUNDERGROUND_PROXY, False),
         "proxy_weathercloud": entry.data.get(CONF_WEATHERCLOUD_PROXY, False),
@@ -58,6 +66,6 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: CloudWe
         "known_sensors": formatted_sensors,
         "entry_data": formatted_entry_data,
         "logs": {
-            "recent": logs,
+            "recent": masked_logs,
         },
     }
