@@ -44,6 +44,10 @@ class CloudWeatherListener:
         if self.proxy_enabled:
             self.proxy = CloudWeatherProxy(self.proxy_sinks, self.dns_servers)
 
+        # Track proxy failures per sink so we can stop retrying noisy targets
+        self.proxy_failure_counts: dict[DataSink, int] = {}
+        self.disabled_proxy_sinks: set[DataSink] = set()
+
         # webserver
         self.server: None | web.Server = None
         self.runner: None | web.ServerRunner = None
@@ -75,6 +79,10 @@ class CloudWeatherListener:
 
         if self.proxy_enabled:
             self.proxy = CloudWeatherProxy(self.proxy_sinks, self.dns_servers)
+
+        # Reset failure state on reconfiguration
+        self.proxy_failure_counts.clear()
+        self.disabled_proxy_sinks.clear()
 
     def get_active_proxies(self) -> list[DataSink]:
         """Get the active proxies."""
@@ -194,15 +202,48 @@ class CloudWeatherListener:
             _LOGGER.warning("CloudWeather new dataset callback error: %s", err)
 
         if self.proxy and sink is not None:
-            try:
-                response: ClientResponse = await self.proxy.forward(sink, request)
+            if sink not in self.proxy.proxied_sinks:
                 _LOGGER.debug(
-                    "CloudWeather proxy response[%d]: %s",
-                    response.status,
-                    await response.text(),
+                    "Skipping proxy for sink %s because it is not enabled", sink
                 )
-            except Exception as err:  # pylint: disable=broad-except
-                _LOGGER.warning("CloudWeather proxy error: %s", err)
+            elif sink in self.disabled_proxy_sinks:
+                _LOGGER.debug(
+                    "Proxy sink %s is disabled after repeated failures; skipping",
+                    sink,
+                )
+            elif self.proxy.session.closed:
+                self.disabled_proxy_sinks.add(sink)
+                _LOGGER.warning(
+                    "CloudWeather proxy forwarding disabled for %s (session closed)",
+                    sink,
+                )
+            else:
+                try:
+                    response: ClientResponse = await self.proxy.forward(sink, request)
+                    body = await response.text()
+                    _LOGGER.debug(
+                        "CloudWeather proxy response[%d]: %s", response.status, body
+                    )
+
+                    if response.status >= 400:
+                        raise RuntimeError(
+                            f"Upstream returned {response.status} for {sink}"
+                        )
+                    # Success: reset counter
+                    self.proxy_failure_counts.pop(sink, None)
+                except Exception as err:  # pylint: disable=broad-except
+                    failures = self.proxy_failure_counts.get(sink, 0) + 1
+                    self.proxy_failure_counts[sink] = failures
+                    disable = failures >= 5
+                    if disable:
+                        self.disabled_proxy_sinks.add(sink)
+                    _LOGGER.warning(
+                        "CloudWeather proxy error for %s (attempt %d/3)%s: %s",
+                        sink,
+                        failures,
+                        "; disabled" if disable else "",
+                        err,
+                    )
 
         self.last_values[station_id] = deepcopy(dataset)
         return web.Response(text="OK")
