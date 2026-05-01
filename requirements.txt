@@ -5,5 +5,5 @@ aiodns>=3.5.0
 pycares>=4.0.0,<6.0.0
 homeassistant==2025.12.5
 pytest>=9.0.0,<10.0.0
-pytest-aiohttp>=1.0.0,<2.0.0
+pytest-aiohttp>=1.1.0,<2.0.0
 pytest-asyncio>=1.0.0,<2.0.0
