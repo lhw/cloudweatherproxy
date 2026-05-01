@@ -1,7 +1,7 @@
 pip>=24.1,<27.0
 ruff>=0.15.12,<=0.20
 colorlog>=6.0.0,<7.0.0
-aiodns>=3.5.0
+aiodns>=4.0.0
 pycares>=4.0.0,<6.0.0
 homeassistant==2025.12.5
 pytest>=9.0.0,<10.0.0
